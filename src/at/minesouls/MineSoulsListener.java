@@ -22,6 +22,7 @@ public class MineSoulsListener implements Listener {
                     player.setHealth(20);
                     removePotionEffects(player);
                     player.sendMessage(ChatColor.GREEN + "Healed!");
+                    player.playSound(player.getLocation(), "minesouls.rest", 100.0f, 1.0f);
                 }
             }
         }
