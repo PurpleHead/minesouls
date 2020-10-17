@@ -2,4 +2,5 @@ name: MineSouls
 version: 1.0a
 author: hosttim
 main: at.minesouls.MineSouls
+depend: [JojokobiUtil]
 api-version: 1.16
