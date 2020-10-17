@@ -1,5 +1,5 @@
 name: MineSouls
 version: 1.0a
 author: hosttim
-main: MineSouls
+main: at.minesouls.MineSouls
 api-version: 1.16
