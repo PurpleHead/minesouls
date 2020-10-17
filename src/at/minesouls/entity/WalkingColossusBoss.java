@@ -3,13 +3,19 @@ package at.minesouls.entity;
 import java.util.HashMap;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.entity.Damageable;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.IronGolem;
 import org.bukkit.entity.Player;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.Vector;
 
 import at.jojokobi.mcutil.entity.Attacker;
 import at.jojokobi.mcutil.entity.BossBarComponent;
@@ -27,6 +33,9 @@ public class WalkingColossusBoss extends CustomEntity<IronGolem> implements Atta
 	
 	private HealthComponent health;
 	private BossBarComponent bossBar;
+	
+	private int damageCount = 0;
+	private boolean jumping = false;
 
 	public WalkingColossusBoss(Location place, EntityHandler handler) {
 		super(place, handler, null);
@@ -43,6 +52,39 @@ public class WalkingColossusBoss extends CustomEntity<IronGolem> implements Atta
 	protected void spawn() {
 		super.spawn();
 
+	}
+	
+	@Override
+	public void loop() {
+		//Perform jump
+		if (jumping && getEntity().isOnGround()) {
+			jumping = false;
+			//Damage
+			for (Entity entity : getEntity().getNearbyEntities(5, 2, 5)) {
+				if (entity instanceof Player) {
+					((Player) entity).damage(10);
+				}
+			}
+			//Spread
+			for (int i = 0; i < 50; i++) {
+				getEntity().getWorld().spawnParticle(Particle.BLOCK_CRACK, getEntity().getLocation().add(Math.random() * 10 - 5, 1, Math.random() * 10 - 5), 10, Material.DIRT.createBlockData());
+			}
+		}
+		super.loop();
+		if (jumping) {
+			Vector vel = getEntity().getVelocity();
+			vel.setX(0);
+			vel.setZ(0);
+			getEntity().setVelocity(vel);
+		}
+	}
+	
+	@Override
+	protected void onDamage(EntityDamageEvent event) {
+		super.onDamage(event);
+		if (event instanceof EntityDamageByEntityEvent) {
+			damageCount++;
+		}
 	}
 
 	@Override
@@ -73,13 +115,21 @@ public class WalkingColossusBoss extends CustomEntity<IronGolem> implements Atta
 
 	@Override
 	public void attack(Damageable entity) {
-		entity.damage(5);
-		entity.setVelocity(entity.getVelocity().setY(1.5));
+		if (damageCount >= 3) {
+			//Super attack
+			jump();
+			jumping = true;
+		}
+		else {
+			entity.damage(5);
+			entity.setVelocity(entity.getVelocity().setY(0.6));
+		}
+		damageCount = 0;
 	}
 
 	@Override
 	public int getAttackDelay() {
-		return 8;
+		return 14;
 	}
 	
 	@Override
@@ -89,7 +139,12 @@ public class WalkingColossusBoss extends CustomEntity<IronGolem> implements Atta
 	
 	@Override
 	protected double getSprintSpeed() {
-		return 0.8;
+		return 0.5;
+	}
+	
+	@Override
+	protected double getJumpSpeed() {
+		return 1.0;
 	}
 
 }
