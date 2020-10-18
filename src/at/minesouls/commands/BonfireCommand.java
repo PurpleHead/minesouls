@@ -22,14 +22,14 @@ public class BonfireCommand implements CommandExecutor {
                 Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + " " + Arrays.toString(strings));
                 Player player = (Player) commandSender;
 
-                if (strings.length == 4) {
+                if (strings.length >= 4) {
                     try {
                         int x = (strings[0].equals("~") ? player.getLocation().getBlockX() : Integer.parseInt(strings[0]) - 1);
                         int y = (strings[1].equals("~") ? player.getLocation().getBlockY() : Integer.parseInt(strings[1]));
                         int z = (strings[2].equals("~") ? player.getLocation().getBlockZ() : Integer.parseInt(strings[2]) - 1);
                         Bukkit.broadcastMessage(x + " " + y + " " + z);
                         player.getWorld().getBlockAt(x, y, z).setType(Material.SOUL_CAMPFIRE);
-                        Bonfire.getBonfire(player.getWorld().getBlockAt(x, y, z), strings[3]);
+                        Bonfire.getBonfire(player.getWorld().getBlockAt(x, y, z), concatArray(strings, 3));
                     } catch (NumberFormatException e) {
                         return false;
                     }
@@ -37,7 +37,17 @@ public class BonfireCommand implements CommandExecutor {
                     return false;
             }
         }
-        return false;
+        return true;
+    }
+
+    private String concatArray (String[] array, int index) {
+        String string = "";
+
+        for (int i = index; i < array.length; i++) {
+            string += array[i] + " ";
+        }
+
+        return string;
     }
 
 }

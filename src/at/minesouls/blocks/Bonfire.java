@@ -1,5 +1,6 @@
 package at.minesouls.blocks;
 
+import at.minesouls.player.MineSoulsPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 
@@ -44,11 +45,17 @@ public class Bonfire {
     }
 
     public static Bonfire getBonfire(Block campfire) {
-        return getBonfire(campfire, "");
+        return getBonfire(campfire, "Bonfire");
     }
 
     public static void clearAll () {
         bonfires.clear();
+        Bukkit.broadcastMessage(bonfires.size() + "");
+    }
+
+    public static void remove (Block campfire) {
+        bonfires.remove(campfire);
+        MineSoulsPlayer.removeBonfireFromAll(campfire);
         Bukkit.broadcastMessage(bonfires.size() + "");
     }
 }
