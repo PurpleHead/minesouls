@@ -1,25 +1,56 @@
 package at.minesouls.gui;
 
 import at.jojokobi.mcutil.gui.InventoryGUI;
+import at.minesouls.blocks.Bonfire;
+import at.minesouls.player.MineSoulsPlayer;
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
-import org.bukkit.inventory.Inventory;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+
+import java.util.HashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class BonfireGUI extends InventoryGUI {
 
-    public BonfireGUI (Player owner, Inventory inventory) {
-        super(owner, inventory);
+    private HashMap<ItemStack, Bonfire> bonfires = new HashMap<>();
+
+    public BonfireGUI(Player owner, String name) {
+        super(owner, Bukkit.createInventory(owner, InventoryType.PLAYER, name));
         initGUI();
     }
 
     @Override
     protected void initGUI() {
+        MineSoulsPlayer mineSoulsPlayer = MineSoulsPlayer.getPlayer(getOwner());
+        AtomicInteger index = new AtomicInteger(0);
 
+        mineSoulsPlayer.getBonfires().forEach((k, b) -> {
+            ItemStack item = new ItemStack(Material.SOUL_CAMPFIRE);
+            ItemMeta meta = item.getItemMeta();
+
+            meta.setDisplayName(b.getName());
+            meta.setLocalizedName(Math.random()*100 + "");
+            item.setItemMeta(meta);
+
+            bonfires.put(item, b);
+            addButton(item, index.get());
+            index.incrementAndGet();
+        });
     }
 
     @Override
     protected void onButtonPress(ItemStack itemStack, ClickType clickType) {
+        if (clickType == ClickType.LEFT) {
+            Location location = bonfires.get(itemStack).get().getLocation();
 
+            location.setZ(location.getBlockZ() - 1);
+            getOwner().teleport(location);
+            close();
+        }
     }
 }

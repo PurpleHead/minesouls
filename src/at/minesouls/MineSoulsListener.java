@@ -1,4 +1,5 @@
 package at.minesouls;
+import at.jojokobi.mcutil.JojokobiUtilPlugin;
 import at.minesouls.blocks.Bonfire;
 import at.minesouls.gui.BonfireGUI;
 import at.minesouls.player.MineSoulsPlayer;
@@ -10,8 +11,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 
 public class MineSoulsListener implements Listener {
@@ -25,8 +26,6 @@ public class MineSoulsListener implements Listener {
                     MineSoulsPlayer mineSoulsPlayer = MineSoulsPlayer.getPlayer(player);
                     Bonfire bonfire = Bonfire.getBonfire(event.getClickedBlock());
 
-                    BonfireGUI bonfireGUI = new BonfireGUI(player, Bukkit.createInventory(null, InventoryType.PLAYER, bonfire.getName()));
-
                     mineSoulsPlayer.setLastBonfireUse(System.currentTimeMillis());
                     mineSoulsPlayer.getBonfires().put(event.getClickedBlock(), bonfire);
 
@@ -34,8 +33,12 @@ public class MineSoulsListener implements Listener {
                     removePotionEffects(player);
                     player.sendMessage(ChatColor.GREEN + "Healed!");
                     player.playSound(player.getLocation(), "minesouls.rest", 100.0f, 1.0f);
+
+                    //Maybe own spawn on death sometime?
                     Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "spawnpoint " + player.getName()+ " " + player.getLocation().getBlockX() + " " + player.getLocation().getBlockY()  + " " + player.getLocation().getBlockZ());
 
+                    BonfireGUI bonfireGUI = new BonfireGUI(player, bonfire.getName());
+                    JavaPlugin.getPlugin(JojokobiUtilPlugin.class).getGuiHandler().addGUI(bonfireGUI);
                     bonfireGUI.show();
                 }
             }
