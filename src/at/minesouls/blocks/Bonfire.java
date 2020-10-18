@@ -2,17 +2,18 @@ package at.minesouls.blocks;
 
 import at.minesouls.player.MineSoulsPlayer;
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 
 import java.util.HashMap;
 
 public class Bonfire {
     private String name;
-    private Block bonfire;
+    private Location bonfire;
 
-    private static HashMap<Block, Bonfire> bonfires = new HashMap<>();
+    private static HashMap<Location, Bonfire> bonfires = new HashMap<>();
 
-    private Bonfire(String name, Block bonfire) {
+    private Bonfire(String name, Location bonfire) {
         this.name = name;
         this.bonfire = bonfire;
     }
@@ -25,15 +26,15 @@ public class Bonfire {
         this.name = name;
     }
 
-    public Block get() {
+    public Location get() {
         return bonfire;
     }
 
-    public void set(Block bonfire) {
+    public void set(Location bonfire) {
         this.bonfire = bonfire;
     }
 
-    public static Bonfire getBonfire(Block campfire, String name) {
+    public static Bonfire getBonfire(Location campfire, String name) {
         Bonfire bonfire = bonfires.get(campfire);
 
         if(bonfire == null) {
@@ -44,7 +45,7 @@ public class Bonfire {
         return bonfire;
     }
 
-    public static Bonfire getBonfire(Block campfire) {
+    public static Bonfire getBonfire(Location campfire) {
         return getBonfire(campfire, "Bonfire");
     }
 

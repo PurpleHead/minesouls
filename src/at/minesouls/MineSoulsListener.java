@@ -24,10 +24,10 @@ public class MineSoulsListener implements Listener {
                 if(event.getClickedBlock().getType() == Material.SOUL_CAMPFIRE) {
                     Player player = event.getPlayer();
                     MineSoulsPlayer mineSoulsPlayer = MineSoulsPlayer.getPlayer(player);
-                    Bonfire bonfire = Bonfire.getBonfire(event.getClickedBlock());
+                    Bonfire bonfire = Bonfire.getBonfire(event.getClickedBlock().getLocation());
 
                     mineSoulsPlayer.setLastBonfireUse(System.currentTimeMillis());
-                    mineSoulsPlayer.getBonfires().put(event.getClickedBlock(), bonfire);
+                    mineSoulsPlayer.getBonfires().put(event.getClickedBlock().getLocation(), bonfire);
 
                     player.setHealth(20);
                     removePotionEffects(player);

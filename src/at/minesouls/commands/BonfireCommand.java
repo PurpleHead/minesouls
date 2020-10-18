@@ -29,7 +29,7 @@ public class BonfireCommand implements CommandExecutor {
                         int z = (strings[2].equals("~") ? player.getLocation().getBlockZ() : Integer.parseInt(strings[2]) - 1);
                         Bukkit.broadcastMessage(x + " " + y + " " + z);
                         player.getWorld().getBlockAt(x, y, z).setType(Material.SOUL_CAMPFIRE);
-                        Bonfire.getBonfire(player.getWorld().getBlockAt(x, y, z), concatArray(strings, 3));
+                        Bonfire.getBonfire(player.getWorld().getBlockAt(x, y, z).getLocation(), concatArray(strings, 3));
                     } catch (NumberFormatException e) {
                         return false;
                     }

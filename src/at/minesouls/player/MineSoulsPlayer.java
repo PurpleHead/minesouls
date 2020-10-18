@@ -1,7 +1,7 @@
 package at.minesouls.player;
 
 import at.minesouls.blocks.Bonfire;
-import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.block.Block;
 
 import java.util.HashMap;
@@ -11,7 +11,7 @@ public class MineSoulsPlayer {
 
     private static HashMap<UUID, MineSoulsPlayer> loadedPlayers = new HashMap<>();
 
-    private HashMap<Block, Bonfire> bonfires = new HashMap<>();
+    private HashMap<Location, Bonfire> bonfires = new HashMap<>();
     private long lastBonfireUse = 0;
     private UUID uuid;
 
@@ -47,11 +47,11 @@ public class MineSoulsPlayer {
         MineSoulsPlayer.loadedPlayers = loadedPlayers;
     }
 
-    public HashMap<Block, Bonfire> getBonfires() {
+    public HashMap<Location, Bonfire> getBonfires() {
         return bonfires;
     }
 
-    public void setBonfires(HashMap<Block, Bonfire> bonfires) {
+    public void setBonfires(HashMap<Location, Bonfire> bonfires) {
         this.bonfires = bonfires;
     }
 
