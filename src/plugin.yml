@@ -4,3 +4,7 @@ author: hosttim
 main: at.minesouls.MineSouls
 api-version: 1.16
 depend: [JojokobiUtil]
+commands:
+  bonfire:
+    description: Places Bonfire
+    usage: /bonfire <x> <y> <z> <name>

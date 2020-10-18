@@ -29,4 +29,8 @@ public class Player {
         return player;
     }
 
+    public static Player getPlayer (org.bukkit.entity.Player player) {
+        return getPlayer(player.getUniqueId());
+    }
+
 }
