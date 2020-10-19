@@ -1,7 +1,6 @@
 package at.minesouls.player;
 
 import at.minesouls.blocks.Bonfire;
-import org.bukkit.Bukkit;
 import org.bukkit.block.Block;
 
 import java.util.HashMap;

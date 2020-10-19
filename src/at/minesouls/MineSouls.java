@@ -6,6 +6,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import at.jojokobi.mcutil.entity.spawns.CustomSpawnsHandler;
 import at.jojokobi.mcutil.entity.spawns.FunctionSpawn;
+import at.minesouls.entity.BlackKnightBoss;
 import at.minesouls.entity.WalkingColossusBoss;
 
 public class MineSouls extends JavaPlugin {
@@ -17,6 +18,7 @@ public class MineSouls extends JavaPlugin {
         Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + " [MINESOULS LOADED]");
         
         CustomSpawnsHandler.getInstance().addItem(new FunctionSpawn(getName().toLowerCase(), "walking_colossus", l -> new WalkingColossusBoss(l, null)));
+        CustomSpawnsHandler.getInstance().addItem(new FunctionSpawn(getName().toLowerCase(), "black_knight", l -> new BlackKnightBoss(l, null)));
     }
 
     @Override

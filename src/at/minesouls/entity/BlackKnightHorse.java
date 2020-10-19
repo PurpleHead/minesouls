@@ -28,7 +28,7 @@ public class BlackKnightHorse extends CustomEntity<Horse> {
 		super(place, handler, null);
 		health = new HealthComponent(new RealHealthAccessor());
 		addComponent(health);
-		bossBar = new BossBarComponent("Black Knight", BarColor.RED, BarStyle.SEGMENTED_10);
+		bossBar = new BossBarComponent("Black Knight Horse", BarColor.RED, BarStyle.SEGMENTED_10);
 		addComponent(bossBar);
 		
 		addEntityTask(new RidingTask());

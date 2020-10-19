@@ -45,7 +45,9 @@ public class BlackKnightBoss extends CustomEntity<WitherSkeleton> implements Att
 	@Override
 	protected void spawn() {
 		super.spawn();
-
+		BlackKnightHorse horse = new BlackKnightHorse(getEntity().getLocation(), null);
+		getHandler().addEntity(horse);
+		horse.getEntity().addPassenger(getEntity());
 	}
 
 	@Override
