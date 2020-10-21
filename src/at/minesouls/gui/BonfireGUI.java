@@ -29,15 +29,15 @@ public class BonfireGUI extends InventoryGUI {
         MineSoulsPlayer mineSoulsPlayer = MineSoulsPlayer.getPlayer(getOwner());
         AtomicInteger index = new AtomicInteger(0);
 
-        mineSoulsPlayer.getBonfires().forEach((k, b) -> {
+        mineSoulsPlayer.getBonfires().forEach((b) -> {
             ItemStack item = new ItemStack(Material.SOUL_CAMPFIRE);
             ItemMeta meta = item.getItemMeta();
 
-            meta.setDisplayName(b.getName());
+            meta.setDisplayName(Bonfire.getBonfire(b).getName());
             meta.setLocalizedName(Math.random()*100 + "");
             item.setItemMeta(meta);
 
-            bonfires.put(item, b);
+            bonfires.put(item, Bonfire.getBonfire(b));
             addButton(item, index.get());
             index.incrementAndGet();
         });

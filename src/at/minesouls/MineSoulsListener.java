@@ -6,14 +6,22 @@ import at.minesouls.player.MineSoulsPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
+
+import java.io.File;
+import java.io.IOException;
 
 public class MineSoulsListener implements Listener {
 
@@ -27,7 +35,9 @@ public class MineSoulsListener implements Listener {
                     Bonfire bonfire = Bonfire.getBonfire(event.getClickedBlock().getLocation());
 
                     mineSoulsPlayer.setLastBonfireUse(System.currentTimeMillis());
-                    mineSoulsPlayer.getBonfires().put(event.getClickedBlock().getLocation(), bonfire);
+                    if(!mineSoulsPlayer.getBonfires().contains(event.getClickedBlock().getLocation())) {
+                        mineSoulsPlayer.getBonfires().add(event.getClickedBlock().getLocation());
+                    }
 
                     player.setHealth(20);
                     removePotionEffects(player);
@@ -48,7 +58,40 @@ public class MineSoulsListener implements Listener {
     @EventHandler
     public void onDestroy(BlockBreakEvent event) {
         if (event.getBlock().getType() == Material.SOUL_CAMPFIRE) {
-            Bonfire.remove(event.getBlock());
+            Bonfire.remove(event.getBlock().getLocation());
+        }
+    }
+
+    @EventHandler
+    public void onDisconnect (PlayerQuitEvent event) {
+        {
+            File dataFolder = new File(Bukkit.getPluginManager().getPlugin(MineSouls.PLUGIN_NAME).getDataFolder(), "players");
+            dataFolder.mkdirs();
+            //Save
+            FileConfiguration config = new YamlConfiguration();
+            config.set("player", MineSoulsPlayer.getPlayer(event.getPlayer()));
+            try {
+                config.save(new File(dataFolder, event.getPlayer().getUniqueId() + ".yml"));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @EventHandler
+    public void onConnect(PlayerJoinEvent event) {
+        File dataFolder = new File(Bukkit.getPluginManager().getPlugin(MineSouls.PLUGIN_NAME).getDataFolder(), "players");
+        dataFolder.mkdirs();
+
+        FileConfiguration config = new YamlConfiguration();
+        File playerFile = new File(dataFolder, event.getPlayer().getUniqueId() + ".yml");
+        try {
+            if(playerFile.exists()) {
+                config.load(playerFile);
+                MineSoulsPlayer.getLoadedPlayers().put(event.getPlayer().getUniqueId(), config.getSerializable("player", MineSoulsPlayer.class));
+            }
+        } catch (IOException | InvalidConfigurationException e) {
+            e.printStackTrace();
         }
     }
 

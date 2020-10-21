@@ -11,8 +11,7 @@ import java.util.Map;
 
 public class Bonfire implements ConfigurationSerializable {
     private static final String NAME_KEY = "name";
-    private static final String LOCATIONS_KEY = "bonfire";
-    private static final String BONFIRES_KEY = "bonfires";
+    private static final String LOCATIONS_KEY = "location";
 
     private String name;
     private Location bonfire;
@@ -36,7 +35,9 @@ public class Bonfire implements ConfigurationSerializable {
     }
 
     public static Bonfire getBonfire(Location campfire) {
-        return getBonfire(campfire, "Bonfire");
+        Bonfire b = getBonfires().get(campfire);
+
+        return (b == null ? getBonfire(campfire, "Bonfire" + Math.random() * 100) : b);
     }
 
     public static void clearAll () {
@@ -44,7 +45,7 @@ public class Bonfire implements ConfigurationSerializable {
         Bukkit.broadcastMessage(bonfires.size() + "");
     }
 
-    public static void remove (Block campfire) {
+    public static void remove (Location campfire) {
         bonfires.remove(campfire);
         MineSoulsPlayer.removeBonfireFromAll(campfire);
         Bukkit.broadcastMessage(bonfires.size() + "");
@@ -80,12 +81,11 @@ public class Bonfire implements ConfigurationSerializable {
 
         map.put(NAME_KEY, getName());
         map.put(LOCATIONS_KEY, get());
-        map.put(BONFIRES_KEY, getBonfires());
 
         return map;
     }
 
-    public Bonfire valueOf (HashMap<String, Object> map) {
+    public static Bonfire valueOf (HashMap<String, Object> map) {
         String name = (String) map.get(NAME_KEY);
         Location location = (Location) map.get(LOCATIONS_KEY);
 
