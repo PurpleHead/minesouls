@@ -70,6 +70,8 @@ public class MineSoulsListener implements Listener {
             //Save
             FileConfiguration config = new YamlConfiguration();
             config.set("player", MineSoulsPlayer.getPlayer(event.getPlayer()));
+
+            MineSoulsPlayer.getLoadedPlayers().remove(event.getPlayer());
             try {
                 config.save(new File(dataFolder, event.getPlayer().getUniqueId() + ".yml"));
             } catch (IOException e) {

@@ -1,9 +1,9 @@
 package at.minesouls.blocks;
 
+import at.jojokobi.mcutil.TypedMap;
 import at.minesouls.player.MineSoulsPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.block.Block;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
 import java.util.HashMap;
@@ -86,7 +86,8 @@ public class Bonfire implements ConfigurationSerializable {
     }
 
     public static Bonfire valueOf (HashMap<String, Object> map) {
-        String name = (String) map.get(NAME_KEY);
+        TypedMap t = new TypedMap(map);
+        String name = t.getString(NAME_KEY);
         Location location = (Location) map.get(LOCATIONS_KEY);
 
         return new Bonfire(name, location);

@@ -20,7 +20,6 @@ public class MineSouls extends JavaPlugin {
     public static final String PLUGIN_NAME = "MineSouls";
 
     private static final String BONFIRE_KEY = "bonfire";
-    private static final String LOCATION_KEY = "location";
 
     @Override
     public void onEnable() {
@@ -72,7 +71,9 @@ public class MineSouls extends JavaPlugin {
             FileConfiguration config = new YamlConfiguration();
             try {
                 config.load(new File(dataFolder, f.getName()));
-                config.getSerializable(BONFIRE_KEY, Bonfire.class);
+
+                Bonfire b = config.getSerializable(BONFIRE_KEY, Bonfire.class);
+                Bonfire.getBonfires().put(b.get(), b);
             } catch (IOException | InvalidConfigurationException e) {
                 e.printStackTrace();
             }
