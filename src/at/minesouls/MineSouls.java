@@ -10,13 +10,15 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.java.JavaPlugin;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
+import at.jojokobi.mcutil.entity.spawns.CustomSpawnsHandler;
+import at.jojokobi.mcutil.entity.spawns.FunctionSpawn;
+import at.minesouls.entity.WalkingColossusBoss;
 
 public class MineSouls extends JavaPlugin {
 
@@ -37,6 +39,8 @@ public class MineSouls extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new MineSoulsListener(), this);
         getCommand(BonfireCommand.COMMAND).setExecutor(new BonfireCommand());
         Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + " [MINESOULS LOADED]");
+        
+        CustomSpawnsHandler.getInstance().addItem(new FunctionSpawn(getName().toLowerCase(), "walking_colossus", l -> new WalkingColossusBoss(l, null)));
     }
 
     @Override
