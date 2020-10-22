@@ -84,15 +84,6 @@ public class MineSoulsPlayer implements ConfigurationSerializable {
     }
 
     @Override
-    public String toString() {
-        return "MineSoulsPlayer{" +
-                "bonfires=" + bonfires.size() +
-                ", lastBonfireUse=" + lastBonfireUse +
-                ", uuid=" + uuid +
-                '}';
-    }
-
-    @Override
     public Map<String, Object> serialize() {
         Map<String, Object> map = new HashMap<>();
 

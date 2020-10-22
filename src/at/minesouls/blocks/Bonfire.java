@@ -2,7 +2,6 @@ package at.minesouls.blocks;
 
 import at.jojokobi.mcutil.TypedMap;
 import at.minesouls.player.MineSoulsPlayer;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
@@ -30,13 +29,11 @@ public class Bonfire implements ConfigurationSerializable {
             bonfire = new Bonfire(name, campfire);
             bonfires.put(campfire, bonfire);
         }
-        Bukkit.broadcastMessage(bonfires.size() + "");
         return bonfire;
     }
 
     public static Bonfire getBonfire(Location campfire) {
         Bonfire b = getBonfires().get(campfire);
-
         return (b == null ? getBonfire(campfire, "Bonfire" + Math.random() * 100) : b);
     }
 

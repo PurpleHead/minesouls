@@ -27,6 +27,9 @@ import java.util.List;
 
 public class MineSoulsListener implements Listener {
 
+    private static final String PLAYER_KEY = "player";
+    private static final String PLAYER_SUBFOLDER = "players";
+
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
         if((System.currentTimeMillis() - MineSoulsPlayer.getPlayer(event.getPlayer()).getLastBonfireUse()) > 1000) {
@@ -46,7 +49,6 @@ public class MineSoulsListener implements Listener {
                     player.sendMessage(ChatColor.GREEN + "Healed!");
                     player.playSound(player.getLocation(), "minesouls.rest", 100.0f, 1.0f);
 
-                    //Maybe own spawn on death sometime?
                     Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "spawnpoint " + player.getName()+ " " + player.getLocation().getBlockX() + " " + player.getLocation().getBlockY()  + " " + player.getLocation().getBlockZ());
 
                     BonfireGUI bonfireGUI = new BonfireGUI(player, bonfire.getName());
@@ -67,11 +69,11 @@ public class MineSoulsListener implements Listener {
     @EventHandler
     public void onDisconnect (PlayerQuitEvent event) {
         {
-            File dataFolder = new File(Bukkit.getPluginManager().getPlugin(MineSouls.PLUGIN_NAME).getDataFolder(), "players");
+            File dataFolder = new File(Bukkit.getPluginManager().getPlugin(MineSouls.PLUGIN_NAME).getDataFolder(), PLAYER_SUBFOLDER);
             dataFolder.mkdirs();
             //Save
             FileConfiguration config = new YamlConfiguration();
-            config.set("player", MineSoulsPlayer.getPlayer(event.getPlayer()));
+            config.set(PLAYER_KEY, MineSoulsPlayer.getPlayer(event.getPlayer()));
 
             MineSoulsPlayer.getLoadedPlayers().remove(event.getPlayer());
             try {
@@ -84,7 +86,7 @@ public class MineSoulsListener implements Listener {
 
     @EventHandler
     public void onConnect(PlayerJoinEvent event) {
-        File dataFolder = new File(Bukkit.getPluginManager().getPlugin(MineSouls.PLUGIN_NAME).getDataFolder(), "players");
+        File dataFolder = new File(Bukkit.getPluginManager().getPlugin(MineSouls.PLUGIN_NAME).getDataFolder(), PLAYER_SUBFOLDER);
         dataFolder.mkdirs();
 
         FileConfiguration config = new YamlConfiguration();
@@ -93,7 +95,7 @@ public class MineSoulsListener implements Listener {
             if(playerFile.exists()) {
                 config.load(playerFile);
 
-                MineSoulsPlayer.getLoadedPlayers().put(event.getPlayer().getUniqueId(), config.getSerializable("player", MineSoulsPlayer.class));
+                MineSoulsPlayer.getLoadedPlayers().put(event.getPlayer().getUniqueId(), config.getSerializable(PLAYER_KEY, MineSoulsPlayer.class));
                 MineSoulsPlayer player = MineSoulsPlayer.getPlayer(event.getPlayer());
 
                 List<Location> bonfiresCopy = List.copyOf(player.getBonfires());
