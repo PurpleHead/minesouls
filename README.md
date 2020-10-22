@@ -8,3 +8,5 @@ This plugins includes different bosses, and core functionalities for a Dark Soul
 Minecraft experience. 
 
 An installation guide follows as soon as the map and the resource packs are finished.
+
+This plugin uses the [jojokobi-plugin-util](https://github.com/JonathanDotExe/jojokobi-util) developed by [JonathanDotExe](https://github.com/JonathanDotExe)
