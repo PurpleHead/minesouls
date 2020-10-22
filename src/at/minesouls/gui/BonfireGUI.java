@@ -46,8 +46,8 @@ public class BonfireGUI extends InventoryGUI {
     @Override
     protected void onButtonPress(ItemStack itemStack, ClickType clickType) {
         if (clickType == ClickType.LEFT) {
-            Location location = bonfires.get(itemStack).getLocation();
-
+            Location location = bonfires.get(itemStack).getLocation().clone();
+            location.setZ(location.getZ() - 1);
             getOwner().teleport(location);
             close();
         }

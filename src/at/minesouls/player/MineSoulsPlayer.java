@@ -1,13 +1,10 @@
 package at.minesouls.player;
 
 import at.jojokobi.mcutil.TypedMap;
-import at.minesouls.blocks.Bonfire;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.block.Block;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.entity.Player;
 
 import java.util.*;
 

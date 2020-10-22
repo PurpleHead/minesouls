@@ -24,6 +24,7 @@ public class MineSouls extends JavaPlugin {
 
     private static final String BONFIRE_KEY = "bonfire";
     private static final String BONFIRE_FILENAME = "bonfires.yml";
+    private static final String BONFIRE_SUBFOLDER = "bonfires";
 
     @Override
     public void onEnable() {
@@ -34,7 +35,7 @@ public class MineSouls extends JavaPlugin {
         loadConfiguration();
 
         getServer().getPluginManager().registerEvents(new MineSoulsListener(), this);
-        getCommand("bonfire").setExecutor(new BonfireCommand());
+        getCommand(BonfireCommand.COMMAND).setExecutor(new BonfireCommand());
         Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + " [MINESOULS LOADED]");
     }
 
@@ -42,12 +43,13 @@ public class MineSouls extends JavaPlugin {
     public void onDisable() {
         super.onDisable();
         saveConfiguration();
+        Bukkit.getConsoleSender().sendMessage(ChatColor.RED + " [MINESOULS DISABLED]");
     }
 
     private void saveConfiguration () {
         // Bonfires
         {
-            File dataFolder = new File(Bukkit.getPluginManager().getPlugin(MineSouls.PLUGIN_NAME).getDataFolder(), "bonfires");
+            File dataFolder = new File(Bukkit.getPluginManager().getPlugin(MineSouls.PLUGIN_NAME).getDataFolder(), BONFIRE_SUBFOLDER);
             dataFolder.mkdirs();
 
             //Save
@@ -72,7 +74,7 @@ public class MineSouls extends JavaPlugin {
     }
 
     private void loadConfiguration () {
-        File dataFolder = new File(Bukkit.getPluginManager().getPlugin(MineSouls.PLUGIN_NAME).getDataFolder(), "bonfires");
+        File dataFolder = new File(Bukkit.getPluginManager().getPlugin(MineSouls.PLUGIN_NAME).getDataFolder(), BONFIRE_SUBFOLDER);
         dataFolder.mkdirs();
 
         FileConfiguration config = new YamlConfiguration();

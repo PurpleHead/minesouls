@@ -13,6 +13,8 @@ import java.util.Arrays;
 
 public class BonfireCommand implements CommandExecutor {
 
+    public static final String COMMAND = "bonfire";
+
     @Override
     public boolean onCommand(CommandSender commandSender, Command command, String s, String[] strings) {
         if(strings.length > 0 && strings[0].equals("clear")) {
