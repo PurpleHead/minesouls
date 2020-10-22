@@ -42,13 +42,12 @@ public class Bonfire implements ConfigurationSerializable {
 
     public static void clearAll () {
         bonfires.clear();
-        Bukkit.broadcastMessage(bonfires.size() + "");
+        MineSoulsPlayer.removeAllBonfires();
     }
 
     public static void remove (Location campfire) {
         bonfires.remove(campfire);
         MineSoulsPlayer.removeBonfireFromAll(campfire);
-        Bukkit.broadcastMessage(bonfires.size() + "");
     }
 
     public String getName() {

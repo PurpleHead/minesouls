@@ -5,6 +5,7 @@ import at.minesouls.gui.BonfireGUI;
 import at.minesouls.player.MineSoulsPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -22,6 +23,7 @@ import org.bukkit.potion.PotionEffect;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 public class MineSoulsListener implements Listener {
 
@@ -90,10 +92,16 @@ public class MineSoulsListener implements Listener {
         try {
             if(playerFile.exists()) {
                 config.load(playerFile);
-                MineSoulsPlayer.getLoadedPlayers().put(event.getPlayer().getUniqueId(), config.getSerializable("player", MineSoulsPlayer.class));
 
-                //TODO
-                Bukkit.broadcastMessage(MineSoulsPlayer.getLoadedPlayers().toString());
+                MineSoulsPlayer.getLoadedPlayers().put(event.getPlayer().getUniqueId(), config.getSerializable("player", MineSoulsPlayer.class));
+                MineSoulsPlayer player = MineSoulsPlayer.getPlayer(event.getPlayer());
+
+                List<Location> bonfiresCopy = List.copyOf(player.getBonfires());
+                bonfiresCopy.forEach(b -> {
+                    if (!Bonfire.getBonfires().containsKey(b)) {
+                        player.getBonfires().remove(b);
+                    }
+                });
             }
         } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();

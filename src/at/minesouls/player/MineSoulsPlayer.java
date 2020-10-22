@@ -2,6 +2,8 @@ package at.minesouls.player;
 
 import at.jojokobi.mcutil.TypedMap;
 import at.minesouls.blocks.Bonfire;
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
@@ -42,6 +44,13 @@ public class MineSoulsPlayer implements ConfigurationSerializable {
     public static void removeBonfireFromAll (Location bonfire) {
         loadedPlayers.forEach((u, p) -> {
             p.getBonfires().remove(bonfire);
+        });
+    }
+
+    public static void removeAllBonfires() {
+        Bukkit.broadcastMessage(ChatColor.RED + "Bonfires cleared!");
+        loadedPlayers.forEach((k, v) -> {
+            v.getBonfires().clear();
         });
     }
 
