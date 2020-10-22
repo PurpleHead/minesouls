@@ -7,6 +7,7 @@ import org.bukkit.attribute.Attribute;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.entity.Horse;
+import org.bukkit.entity.Horse.Color;
 import org.bukkit.plugin.java.JavaPlugin;
 import at.jojokobi.mcutil.entity.BossBarComponent;
 import at.jojokobi.mcutil.entity.CustomEntity;
@@ -28,7 +29,7 @@ public class BlackKnightHorse extends CustomEntity<Horse> {
 		super(place, handler, null);
 		health = new HealthComponent(new RealHealthAccessor());
 		addComponent(health);
-		bossBar = new BossBarComponent("Black Knight Horse", BarColor.RED, BarStyle.SEGMENTED_10);
+		bossBar = new BossBarComponent("Black Knight Horse", BarColor.GREEN, BarStyle.SEGMENTED_10);
 		addComponent(bossBar);
 		
 		addEntityTask(new RidingTask());
@@ -49,7 +50,10 @@ public class BlackKnightHorse extends CustomEntity<Horse> {
 	@Override
 	protected Horse createEntity(Location place) {
 		Horse horse = place.getWorld().spawn(place, Horse.class);
-		horse.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(100);
+		horse.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(150);
+		horse.setHealth(150);
+		horse.setTamed(true);
+		horse.setColor(Color.BLACK);
 		
 		NMSEntityUtil.clearGoals(horse);
 		
@@ -73,7 +77,7 @@ public class BlackKnightHorse extends CustomEntity<Horse> {
 	
 	@Override
 	protected double getSprintSpeed() {
-		return 0.5;
+		return 0.7;
 	}
 
 }

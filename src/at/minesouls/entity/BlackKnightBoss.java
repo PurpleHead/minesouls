@@ -9,6 +9,7 @@ import org.bukkit.boss.BarStyle;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.WitherSkeleton;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
@@ -26,7 +27,7 @@ import at.jojokobi.mcutil.entity.ai.AttackTask;
 import at.jojokobi.mcutil.entity.ai.RandomTask;
 import at.minesouls.MineSouls;
 
-public class BlackKnightBoss extends CustomEntity<WitherSkeleton> implements Attacker{
+public class BlackKnightBoss extends CustomEntity<Skeleton> implements Attacker{
 
 	private HealthComponent health;
 	private BossBarComponent bossBar;
@@ -47,7 +48,9 @@ public class BlackKnightBoss extends CustomEntity<WitherSkeleton> implements Att
 		super.spawn();
 		BlackKnightHorse horse = new BlackKnightHorse(getEntity().getLocation(), null);
 		getHandler().addEntity(horse);
-		horse.getEntity().addPassenger(getEntity());
+		getHandler().runTaskLater(() -> {
+			horse.getEntity().addPassenger(getEntity());
+		}, 1);
 	}
 
 	@Override
@@ -56,9 +59,10 @@ public class BlackKnightBoss extends CustomEntity<WitherSkeleton> implements Att
 	}
 
 	@Override
-	protected WitherSkeleton createEntity(Location place) {
+	protected Skeleton createEntity(Location place) {
 		WitherSkeleton knight = place.getWorld().spawn(place, WitherSkeleton.class);
-		knight.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(150);
+		knight.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(400);
+		knight.setHealth(400);
 		knight.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE).setBaseValue(1);
 		
 		NMSEntityUtil.clearGoals(knight);
