@@ -13,6 +13,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class MineSouls extends JavaPlugin {
@@ -20,11 +23,12 @@ public class MineSouls extends JavaPlugin {
     public static final String PLUGIN_NAME = "MineSouls";
 
     private static final String BONFIRE_KEY = "bonfire";
+    private static final String BONFIRE_FILENAME = "bonfires.yml";
 
     @Override
     public void onEnable() {
         super.onEnable();
-        ConfigurationSerialization.registerClass(Bonfire.class, BONFIRE_KEY);
+        ConfigurationSerialization.registerClass(Bonfire.class);
         ConfigurationSerialization.registerClass(MineSoulsPlayer.class);
 
         loadConfiguration();
@@ -49,17 +53,21 @@ public class MineSouls extends JavaPlugin {
             //Save
             AtomicInteger index = new AtomicInteger(0);
 
-            Bonfire.getBonfires().forEach((k, v) -> {
-                FileConfiguration config = new YamlConfiguration();
-                config.set(BONFIRE_KEY, v);
-                try {
-                    config.save(new File(dataFolder, "bonfire_" + v.getName() + "_" + index.get() + ".yml"));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+            FileConfiguration config = new YamlConfiguration();
+            List<Bonfire> bonfires = new LinkedList<>();
 
-                index.incrementAndGet();
+            Bonfire.getBonfires().forEach((k, v) -> {
+                bonfires.add(v);
             });
+
+            config.set(BONFIRE_KEY, bonfires);
+            try {
+                config.save(new File(dataFolder, BONFIRE_FILENAME));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            index.incrementAndGet();
         }
     }
 
@@ -67,13 +75,20 @@ public class MineSouls extends JavaPlugin {
         File dataFolder = new File(Bukkit.getPluginManager().getPlugin(MineSouls.PLUGIN_NAME).getDataFolder(), "bonfires");
         dataFolder.mkdirs();
 
-        for (File f : dataFolder.listFiles()) {
-            FileConfiguration config = new YamlConfiguration();
+        FileConfiguration config = new YamlConfiguration();
+        File bonfireFile = new File(dataFolder, BONFIRE_FILENAME);
+        if(bonfireFile.exists()) {
             try {
-                config.load(new File(dataFolder, f.getName()));
+                config.load(bonfireFile);
 
-                Bonfire b = config.getSerializable(BONFIRE_KEY, Bonfire.class);
-                Bonfire.getBonfires().put(b.get(), b);
+                List<Object> list = (List<Object>) config.getList(BONFIRE_KEY);
+                HashMap<Location, Bonfire> bonfires = new HashMap<>();
+                for(Object o : list) {
+                    Bonfire b = (Bonfire) o;
+                    bonfires.put(b.getLocation(), b);
+                }
+
+                Bonfire.setBonfires(bonfires);
             } catch (IOException | InvalidConfigurationException e) {
                 e.printStackTrace();
             }

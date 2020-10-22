@@ -91,6 +91,9 @@ public class MineSoulsListener implements Listener {
             if(playerFile.exists()) {
                 config.load(playerFile);
                 MineSoulsPlayer.getLoadedPlayers().put(event.getPlayer().getUniqueId(), config.getSerializable("player", MineSoulsPlayer.class));
+
+                //TODO
+                Bukkit.broadcastMessage(MineSoulsPlayer.getLoadedPlayers().toString());
             }
         } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();

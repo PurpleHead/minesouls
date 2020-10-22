@@ -59,11 +59,11 @@ public class Bonfire implements ConfigurationSerializable {
         this.name = name;
     }
 
-    public Location get() {
+    public Location getLocation() {
         return bonfire;
     }
 
-    public void set(Location bonfire) {
+    public void setLocation(Location bonfire) {
         this.bonfire = bonfire;
     }
 
@@ -80,12 +80,12 @@ public class Bonfire implements ConfigurationSerializable {
         Map<String, Object> map = new HashMap<>();
 
         map.put(NAME_KEY, getName());
-        map.put(LOCATIONS_KEY, get());
+        map.put(LOCATIONS_KEY, getLocation());
 
         return map;
     }
 
-    public static Bonfire valueOf (HashMap<String, Object> map) {
+    public static Bonfire valueOf (Map<String, Object> map) {
         TypedMap t = new TypedMap(map);
         String name = t.getString(NAME_KEY);
         Location location = (Location) map.get(LOCATIONS_KEY);
