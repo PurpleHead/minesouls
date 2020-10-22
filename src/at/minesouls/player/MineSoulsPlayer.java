@@ -1,17 +1,22 @@
 package at.minesouls.player;
 
-import at.minesouls.blocks.Bonfire;
+import at.jojokobi.mcutil.TypedMap;
 import org.bukkit.Bukkit;
-import org.bukkit.block.Block;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.*;
 
-public class MineSoulsPlayer {
+public class MineSoulsPlayer implements ConfigurationSerializable {
+
+    private static final String UUID_KEY = "uuid";
+    private static final String LAST_BONFIRE_USE_KEY = "lastBonfireUse";
+    private static final String BONFIRES_KEY = "bonfires";
 
     private static HashMap<UUID, MineSoulsPlayer> loadedPlayers = new HashMap<>();
 
-    private HashMap<Block, Bonfire> bonfires = new HashMap<>();
+    private List<Location> bonfires = new LinkedList<>();
     private long lastBonfireUse = 0;
     private UUID uuid;
 
@@ -33,9 +38,16 @@ public class MineSoulsPlayer {
         return getPlayer(player.getUniqueId());
     }
 
-    public static void removeBonfireFromAll (Block bonfire) {
+    public static void removeBonfireFromAll (Location bonfire) {
         loadedPlayers.forEach((u, p) -> {
             p.getBonfires().remove(bonfire);
+        });
+    }
+
+    public static void removeAllBonfires() {
+        Bukkit.broadcastMessage(ChatColor.RED + "Bonfires cleared!");
+        loadedPlayers.forEach((k, v) -> {
+            v.getBonfires().clear();
         });
     }
 
@@ -47,11 +59,11 @@ public class MineSoulsPlayer {
         MineSoulsPlayer.loadedPlayers = loadedPlayers;
     }
 
-    public HashMap<Block, Bonfire> getBonfires() {
+    public List<Location> getBonfires() {
         return bonfires;
     }
 
-    public void setBonfires(HashMap<Block, Bonfire> bonfires) {
+    public void setBonfires(List<Location> bonfires) {
         this.bonfires = bonfires;
     }
 
@@ -72,11 +84,24 @@ public class MineSoulsPlayer {
     }
 
     @Override
-    public String toString() {
-        return "MineSoulsPlayer{" +
-                "bonfires=" + bonfires.size() +
-                ", lastBonfireUse=" + lastBonfireUse +
-                ", uuid=" + uuid +
-                '}';
+    public Map<String, Object> serialize() {
+        Map<String, Object> map = new HashMap<>();
+
+        map.put(LAST_BONFIRE_USE_KEY, getLastBonfireUse());
+        map.put(UUID_KEY, getUuid().toString());
+        map.put(BONFIRES_KEY, getBonfires());
+
+        return map;
+    }
+
+    public static MineSoulsPlayer valueOf (Map<String, Object> map) {
+        UUID uuid = UUID.fromString((String) map.get(UUID_KEY));
+        MineSoulsPlayer player = new MineSoulsPlayer(uuid);
+        TypedMap t = new TypedMap(map);
+
+        player.setLastBonfireUse(t.getLong(LAST_BONFIRE_USE_KEY));
+        player.setBonfires(t.getList(BONFIRES_KEY, Location.class));
+
+        return player;
     }
 }
