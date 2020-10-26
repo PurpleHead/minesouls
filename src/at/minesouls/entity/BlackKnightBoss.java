@@ -3,14 +3,17 @@ package at.minesouls.entity;
 import java.util.HashMap;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.attribute.Attribute;
 import org.bukkit.boss.BarColor;
 import org.bukkit.boss.BarStyle;
 import org.bukkit.entity.Damageable;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Skeleton;
 import org.bukkit.entity.WitherSkeleton;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
@@ -27,7 +30,7 @@ import at.jojokobi.mcutil.entity.ai.AttackTask;
 import at.jojokobi.mcutil.entity.ai.RandomTask;
 import at.minesouls.MineSouls;
 
-public class BlackKnightBoss extends CustomEntity<WitherSkeleton> implements Attacker{
+public class BlackKnightBoss extends CustomEntity<Skeleton> implements Attacker{
 
 	private HealthComponent health;
 	private BossBarComponent bossBar;
@@ -46,9 +49,11 @@ public class BlackKnightBoss extends CustomEntity<WitherSkeleton> implements Att
 	@Override
 	protected void spawn() {
 		super.spawn();
-		BlackKnightHorse horse = new BlackKnightHorse(getEntity().getLocation(), null);
-		getHandler().addEntity(horse);
-		System.out.println(horse.getEntity().addPassenger(getEntity()));
+		getHandler().runTaskLater(() -> {
+			BlackKnightHorse horse = new BlackKnightHorse(getEntity().getLocation(), null);
+			getHandler().addEntity(horse);
+			horse.getEntity().addPassenger(getEntity());
+		}, 20);
 	}
 
 	@Override
@@ -57,11 +62,13 @@ public class BlackKnightBoss extends CustomEntity<WitherSkeleton> implements Att
 	}
 
 	@Override
-	protected WitherSkeleton createEntity(Location place) {
-		WitherSkeleton knight = place.getWorld().spawn(place, WitherSkeleton.class);
+	protected Skeleton createEntity(Location place) {
+		Skeleton knight = place.getWorld().spawn(place, WitherSkeleton.class);
 		knight.getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(400);
 		knight.setHealth(400);
 		knight.getAttribute(Attribute.GENERIC_KNOCKBACK_RESISTANCE).setBaseValue(1);
+		
+		knight.getEquipment().setHelmet(new ItemStack(Material.DIAMOND_HELMET));
 		
 		NMSEntityUtil.clearGoals(knight);
 		
@@ -71,9 +78,7 @@ public class BlackKnightBoss extends CustomEntity<WitherSkeleton> implements Att
 	@Override
 	protected void onDamage(EntityDamageEvent event) {
 		super.onDamage(event);
-		if (getEntity().getVehicle() != null) {
-			event.setCancelled(true);
-		}
+		event.setCancelled(true);
 	}
 
 	@Override
@@ -88,13 +93,7 @@ public class BlackKnightBoss extends CustomEntity<WitherSkeleton> implements Att
 
 	@Override
 	public void attack(Damageable entity) {
-		//Vehicle attack
-		if (getEntity().getVehicle() != null) {
-			entity.damage(6);
-			getEntity().getVehicle().setVelocity(getEntity().getVelocity().multiply(-1));
-		}
-		//Normal attack
-		else {
+		if (getEntity().getVehicle() == null) {
 			entity.damage(8);
 			if (entity instanceof LivingEntity) {
 				((LivingEntity) entity).addPotionEffect(new PotionEffect(PotionEffectType.WITHER, 20 * 7, 1));
