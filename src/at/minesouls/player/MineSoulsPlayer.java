@@ -89,7 +89,7 @@ public class MineSoulsPlayer implements ConfigurationSerializable {
 
         map.put(LAST_BONFIRE_USE_KEY, getLastBonfireUse());
         map.put(UUID_KEY, getUuid().toString());
-        map.put(BONFIRES_KEY, getBonfires());
+        map.put(BONFIRES_KEY, List.copyOf(getBonfires()));
 
         return map;
     }
