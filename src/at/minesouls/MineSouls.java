@@ -1,6 +1,7 @@
 package at.minesouls;
 import at.minesouls.blocks.Bonfire;
 import at.minesouls.commands.BonfireCommand;
+import at.minesouls.entity.ZombieWarrior;
 import at.minesouls.player.MineSoulsPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -38,9 +39,11 @@ public class MineSouls extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new MineSoulsListener(), this);
         getCommand(BonfireCommand.COMMAND).setExecutor(new BonfireCommand());
-        Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + " [MINESOULS LOADED]");
         
         CustomSpawnsHandler.getInstance().addItem(new FunctionSpawn(getName().toLowerCase(), "walking_colossus", l -> new WalkingColossusBoss(l, null)));
+        CustomSpawnsHandler.getInstance().addItem(new FunctionSpawn(getName().toLowerCase(), "zombie_warrior", l -> new ZombieWarrior(l, null)));
+
+        Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + " [MINESOULS LOADED]");
     }
 
     @Override
@@ -56,9 +59,6 @@ public class MineSouls extends JavaPlugin {
             File dataFolder = new File(Bukkit.getPluginManager().getPlugin(MineSouls.PLUGIN_NAME).getDataFolder(), BONFIRE_SUBFOLDER);
             dataFolder.mkdirs();
 
-            //Save
-            AtomicInteger index = new AtomicInteger(0);
-
             FileConfiguration config = new YamlConfiguration();
             List<Bonfire> bonfires = new LinkedList<>();
 
@@ -72,8 +72,6 @@ public class MineSouls extends JavaPlugin {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-            index.incrementAndGet();
         }
     }
 
