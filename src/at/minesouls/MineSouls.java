@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 import at.jojokobi.mcutil.entity.spawns.CustomSpawnsHandler;
 import at.jojokobi.mcutil.entity.spawns.FunctionSpawn;
 import at.minesouls.entity.WalkingColossusBoss;
@@ -29,6 +28,7 @@ public class MineSouls extends JavaPlugin {
     private static final String BONFIRE_FILENAME = "bonfires.yml";
     private static final String BONFIRE_SUBFOLDER = "bonfires";
 
+
     @Override
     public void onEnable() {
         super.onEnable();
@@ -39,7 +39,7 @@ public class MineSouls extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new MineSoulsListener(), this);
         getCommand(BonfireCommand.COMMAND).setExecutor(new BonfireCommand());
-        
+
         CustomSpawnsHandler.getInstance().addItem(new FunctionSpawn(getName().toLowerCase(), "walking_colossus", l -> new WalkingColossusBoss(l, null)));
         CustomSpawnsHandler.getInstance().addItem(new FunctionSpawn(getName().toLowerCase(), "zombie_warrior", l -> new ZombieWarrior(l, null)));
 

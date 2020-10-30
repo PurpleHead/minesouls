@@ -3,6 +3,7 @@ package at.minesouls.spawngroups;
 import at.minesouls.MineSouls;
 import at.minesouls.blocks.Bonfire;
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.world.SpawnChangeEvent;
@@ -23,24 +24,37 @@ public class SpawnGroupHandler {
         dataFolder.mkdirs();
 
         FileConfiguration config = new YamlConfiguration();
-        List<SpawnChangeEvent> bonfires = new LinkedList<>();
 
-        Bonfire.getBonfires().forEach((k, v) -> {
-            bonfires.add(v);
-        });
-
-        config.set(BONFIRE_KEY, bonfires);
         try {
-            config.save(new File(dataFolder, BONFIRE_FILENAME));
-        } catch (IOException e) {
+            config.load(new File(dataFolder, "spawn_groups.yml"));
+            for (Object o : config.getList("spawnGroups")) {
+                if (o instanceof SpawnGroup) {
+                    SpawnGroup group = (SpawnGroup) o;
+                    spawnGroupMap.put(group.getName(), group);
+                }
+            }
+        } catch (IOException | InvalidConfigurationException e) {
             e.printStackTrace();
         }
-
-        index.incrementAndGet();
     }
 
     public void disable () {
+        File dataFolder = Bukkit.getPluginManager().getPlugin(MineSouls.PLUGIN_NAME).getDataFolder();
+        dataFolder.mkdirs();
 
+        FileConfiguration config = new YamlConfiguration();
+        List<SpawnGroup> spawns = new LinkedList<>();
+
+        spawnGroupMap.forEach((k, v) -> {
+            spawns.add(v);
+        });
+
+        config.set("spawnGroups", spawns);
+        try {
+            config.save(new File(dataFolder, "spawn_groups.yml"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public Map<String, SpawnGroup> getSpawnGroupMap() {

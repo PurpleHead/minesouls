@@ -6,13 +6,14 @@ import at.jojokobi.mcutil.entity.EntityMapData;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Player;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Skeleton;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 public class WhiteKnight extends CustomEntity<Skeleton> {
 
@@ -30,7 +31,7 @@ public class WhiteKnight extends CustomEntity<Skeleton> {
         Skeleton skeleton = location.getWorld().spawn(location, Skeleton.class);
         ItemStack skull = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta meta = (SkullMeta) skull.getItemMeta();
-        Player player = Bukkit.getOfflinePlayer();
+        OfflinePlayer player = Bukkit.getOfflinePlayer(UUID.fromString("39122d35-27c3-4806-b24d-9b975923031c"));
 
         meta.setOwningPlayer(player);
         skull.setItemMeta(meta);
