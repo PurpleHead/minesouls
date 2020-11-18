@@ -2,7 +2,6 @@ package at.minesouls.spawngroups;
 
 import at.jojokobi.mcutil.TypedMap;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.event.world.SpawnChangeEvent;
 
 import java.util.HashMap;
 import java.util.LinkedList;

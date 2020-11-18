@@ -26,17 +26,13 @@ public class SpawnGroupHandler {
         List<SpawnChangeEvent> bonfires = new LinkedList<>();
 
         Bonfire.getBonfires().forEach((k, v) -> {
-            bonfires.add(v);
+            //bonfires.add(v);
         });
 
-        config.set(BONFIRE_KEY, bonfires);
-        try {
-            config.save(new File(dataFolder, BONFIRE_FILENAME));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        //config.set(BONFIRE_KEY, bonfires);
+        //config.save(new File(dataFolder, BONFIRE_FILENAME));
 
-        index.incrementAndGet();
+        // index.incrementAndGet();
     }
 
     public void disable () {

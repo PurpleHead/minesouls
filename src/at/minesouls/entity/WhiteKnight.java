@@ -30,9 +30,7 @@ public class WhiteKnight extends CustomEntity<Skeleton> {
         Skeleton skeleton = location.getWorld().spawn(location, Skeleton.class);
         ItemStack skull = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta meta = (SkullMeta) skull.getItemMeta();
-        Player player = Bukkit.getOfflinePlayer();
 
-        meta.setOwningPlayer(player);
         skull.setItemMeta(meta);
 
         skeleton.getEquipment().setHelmet(skull);

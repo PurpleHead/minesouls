@@ -5,7 +5,6 @@ import at.jojokobi.mcutil.TypedMap;
 import at.jojokobi.mcutil.entity.spawns.CustomSpawn;
 import at.jojokobi.mcutil.entity.spawns.CustomSpawnsHandler;
 import org.bukkit.Location;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
 import java.util.HashMap;
 import java.util.Map;
