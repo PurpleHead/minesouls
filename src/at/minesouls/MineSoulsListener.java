@@ -55,7 +55,6 @@ public class MineSoulsListener implements Listener {
 
                     player.setHealth(20);
                     removePotionEffects(player);
-                    player.sendMessage(ChatColor.GREEN + "Healed!");
                     player.playSound(player.getLocation(), "minesouls.rest", 100.0f, 1.0f);
 
                     Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "spawnpoint " + player.getName()+ " " + player.getLocation().getBlockX() + " " + player.getLocation().getBlockY()  + " " + player.getLocation().getBlockZ());
@@ -76,12 +75,12 @@ public class MineSoulsListener implements Listener {
                         event.getClickedBlock().setType(Material.AIR);
 
                         armorStand = (ArmorStand) event.getClickedBlock().getWorld().spawnEntity(loc, EntityType.ARMOR_STAND);
-                        armorStand.setVisible(true);
+                        armorStand.setVisible(false);
                         armorStand.setGravity(false);
-                        armorStand.setCustomName(displayName.split("::")[1]);
+                        armorStand.setInvulnerable(true);
+                        armorStand.setCustomName(displayName);
                         armorStand.setCustomNameVisible(false);
                     }
-
                 }
             }
         }
@@ -141,11 +140,21 @@ public class MineSoulsListener implements Listener {
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
         Collection<Entity> entities = event.getPlayer().getWorld().getNearbyEntities(event.getPlayer().getLocation(), 0.5, 0.5, 0.5);
+        MineSoulsPlayer player = MineSoulsPlayer.getPlayer(event.getPlayer());
         entities.forEach(entity -> {
-            if(entity.getType() == EntityType.ARMOR_STAND) {
-                event.getPlayer().sendMessage(entity.getCustomName());
+            if(entity.getType() == EntityType.ARMOR_STAND && entity.getCustomName() != null && entity.getCustomName().startsWith("Area::")) {
+                String split = entity.getCustomName().split("Area::")[1];
+                if(!player.getCurrentArea().equalsIgnoreCase(split)) {
+                    player.setCurrentArea(split);
+                    event.getPlayer().sendTitle(split, null, 10, 20, 10);
+                }
+
             }
         });
+        //TODO Activate
+        /*if(player.getCurrentArea().equals("Darkwood") && event.getPlayer().getLocation().getBlock().getLightLevel() < 9) {
+            event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 100, 1));
+        }*/
     }
 
     private void removePotionEffects (Player player) {
