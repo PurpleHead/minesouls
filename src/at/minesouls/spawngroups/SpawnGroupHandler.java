@@ -68,6 +68,7 @@ public class SpawnGroupHandler {
         dataFolder.mkdirs();
 
         FileConfiguration config = new YamlConfiguration();
+
         File spawngroupFile = new File(dataFolder, FILENAME);
 
         if(spawngroupFile.exists()) {

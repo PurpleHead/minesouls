@@ -5,12 +5,14 @@ import at.jojokobi.mcutil.entity.EntityHandler;
 import at.jojokobi.mcutil.entity.EntityMapData;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Skeleton;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 public class WhiteKnight extends CustomEntity<Skeleton> {
 
