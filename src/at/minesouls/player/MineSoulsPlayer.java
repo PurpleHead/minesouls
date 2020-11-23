@@ -11,14 +11,15 @@ import java.util.*;
 public class MineSoulsPlayer implements ConfigurationSerializable {
 
     private static final String UUID_KEY = "uuid";
-    private static final String LAST_BONFIRE_USE_KEY = "lastBonfireUse";
+    private static final String LAST_INTERACT_KEY = "lastInteract";
     private static final String BONFIRES_KEY = "bonfires";
     private static final String CURRENT_AREA_KEY = "currentArea";
+    private static final String LAST_BONFIRE_USE_KEY = "lastBonfireUse";
 
     private static HashMap<UUID, MineSoulsPlayer> loadedPlayers = new HashMap<>();
 
     private List<Location> bonfires = new LinkedList<>();
-    private long lastBonfireUse = 0;
+    private long lastInteract = 0;
     private UUID uuid;
     private String currentArea = "";
 
@@ -69,12 +70,12 @@ public class MineSoulsPlayer implements ConfigurationSerializable {
         this.bonfires = bonfires;
     }
 
-    public long getLastBonfireUse() {
-        return lastBonfireUse;
+    public long getLastInteract() {
+        return lastInteract;
     }
 
-    public void setLastBonfireUse(long lastBonfireUse) {
-        this.lastBonfireUse = lastBonfireUse;
+    public void setLastInteract(long lastInteract) {
+        this.lastInteract = lastInteract;
     }
 
     public UUID getUuid() {
@@ -97,7 +98,7 @@ public class MineSoulsPlayer implements ConfigurationSerializable {
     public Map<String, Object> serialize() {
         Map<String, Object> map = new HashMap<>();
 
-        map.put(LAST_BONFIRE_USE_KEY, getLastBonfireUse());
+        map.put(LAST_INTERACT_KEY, getLastInteract());
         map.put(UUID_KEY, getUuid().toString());
         map.put(BONFIRES_KEY, List.copyOf(getBonfires()));
         map.put(CURRENT_AREA_KEY, getCurrentArea());
@@ -110,7 +111,7 @@ public class MineSoulsPlayer implements ConfigurationSerializable {
         MineSoulsPlayer player = new MineSoulsPlayer(uuid);
         TypedMap t = new TypedMap(map);
 
-        player.setLastBonfireUse(t.getLong(LAST_BONFIRE_USE_KEY));
+        player.setLastInteract(t.getLong(LAST_INTERACT_KEY));
         player.setBonfires(t.getList(BONFIRES_KEY, Location.class));
         player.setCurrentArea(t.getString(CURRENT_AREA_KEY));
 

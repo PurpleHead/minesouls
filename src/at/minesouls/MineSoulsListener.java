@@ -1,9 +1,9 @@
 package at.minesouls;
 import at.jojokobi.mcutil.JojokobiUtilPlugin;
-import at.jojokobi.mcutil.entity.EntityUtil;
 import at.minesouls.blocks.Bonfire;
 import at.minesouls.gui.BonfireGUI;
 import at.minesouls.player.MineSoulsPlayer;
+import at.minesouls.spawngroups.SpawnGroupHandler;
 import org.bukkit.*;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -21,34 +21,31 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.metadata.FixedMetadataValue;
-import org.bukkit.persistence.PersistentDataContainer;
-import org.bukkit.persistence.PersistentDataType;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Vector;
 
 public class MineSoulsListener implements Listener {
 
     private static final String PLAYER_KEY = "player";
     private static final String PLAYER_SUBFOLDER = "players";
 
+    private SpawnGroupHandler handler = SpawnGroupHandler.getInstance();
+
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
-        if((System.currentTimeMillis() - MineSoulsPlayer.getPlayer(event.getPlayer()).getLastBonfireUse()) > 1000) {
+        if((System.currentTimeMillis() - MineSoulsPlayer.getPlayer(event.getPlayer()).getLastInteract()) > 1000) {
+            Player player = event.getPlayer();
+            MineSoulsPlayer mineSoulsPlayer = MineSoulsPlayer.getPlayer(player);
             if (event.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
                 if(event.getClickedBlock().getType() == Material.SOUL_CAMPFIRE) {
-                    Player player = event.getPlayer();
-                    MineSoulsPlayer mineSoulsPlayer = MineSoulsPlayer.getPlayer(player);
                     Bonfire bonfire = Bonfire.getBonfire(event.getClickedBlock().getLocation());
 
-                    mineSoulsPlayer.setLastBonfireUse(System.currentTimeMillis());
+                    mineSoulsPlayer.setLastInteract(System.currentTimeMillis());
                     if(!mineSoulsPlayer.getBonfires().contains(event.getClickedBlock().getLocation())) {
                         mineSoulsPlayer.getBonfires().add(event.getClickedBlock().getLocation());
                     }
@@ -61,14 +58,18 @@ public class MineSoulsListener implements Listener {
 
                     BonfireGUI bonfireGUI = new BonfireGUI(player, bonfire.getName());
                     JavaPlugin.getPlugin(JojokobiUtilPlugin.class).getGuiHandler().addGUI(bonfireGUI);
+                    bonfireGUI.setOnClose(() -> handler.spawnGroup(mineSoulsPlayer.getCurrentArea()));
+                    handler.despawnAll();
                     bonfireGUI.show();
+                    handler.setAllRested();
                 }
                 if(event.getPlayer().getInventory().getItemInMainHand().getType() == (Material.SHEARS)) {
                     ArmorStand armorStand;
                     ItemStack shears = event.getPlayer().getInventory().getItemInMainHand();
                     String displayName = shears.getItemMeta().getDisplayName();
+                    String[] split = displayName.split("::");
 
-                    if(displayName.startsWith("Area::") && displayName.split("::").length > 1) {
+                    if(displayName.startsWith("Area::") && split.length > 1) {
                         Location loc = event.getClickedBlock().getLocation();
                         loc.add(0.5, 0, 0.5);
 
@@ -80,6 +81,14 @@ public class MineSoulsListener implements Listener {
                         armorStand.setInvulnerable(true);
                         armorStand.setCustomName(displayName);
                         armorStand.setCustomNameVisible(false);
+                    } else if(displayName.startsWith("Spawn::") && split.length > 1) {
+                        String[] spaceSplit = split[1].split(" ");
+                        Location loc = event.getClickedBlock().getLocation().clone();
+                        loc.add(0, 1, 0);
+                        handler.addSpawn(MineSouls.stringRange(spaceSplit, 1, spaceSplit.length), spaceSplit[0], loc);
+                        event.getClickedBlock().getWorld().playEffect(loc, Effect.MOBSPAWNER_FLAMES, 100);
+                        event.getClickedBlock().getWorld().playSound(loc, Sound.BLOCK_BARREL_OPEN, 10, 1);
+                        mineSoulsPlayer.setLastInteract(System.currentTimeMillis());
                     }
                 }
             }
@@ -147,8 +156,11 @@ public class MineSoulsListener implements Listener {
                 if(!player.getCurrentArea().equalsIgnoreCase(split)) {
                     player.setCurrentArea(split);
                     event.getPlayer().sendTitle(split, null, 10, 20, 10);
+                    event.getPlayer().playSound(event.getPlayer().getLocation(), "minesouls.area", 100.0f, 1.0f);
+                    if (handler.hasRested(split)) {
+                        handler.spawnGroup(split);
+                    }
                 }
-
             }
         });
         //TODO Activate

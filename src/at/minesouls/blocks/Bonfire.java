@@ -1,16 +1,29 @@
 package at.minesouls.blocks;
 
 import at.jojokobi.mcutil.TypedMap;
+import at.minesouls.MineSouls;
 import at.minesouls.player.MineSoulsPlayer;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 public class Bonfire implements ConfigurationSerializable {
     private static final String NAME_KEY = "name";
     private static final String LOCATIONS_KEY = "location";
+
+    private static final String BONFIRE_KEY = "bonfire";
+    private static final String BONFIRE_FILENAME = "bonfires.yml";
+    private static final String BONFIRE_SUBFOLDER = "bonfires";
 
     private String name;
     private Location bonfire;
@@ -45,6 +58,49 @@ public class Bonfire implements ConfigurationSerializable {
     public static void remove (Location campfire) {
         bonfires.remove(campfire);
         MineSoulsPlayer.removeBonfireFromAll(campfire);
+    }
+
+    public static void disable () {
+        File dataFolder = new File(Bukkit.getPluginManager().getPlugin(MineSouls.PLUGIN_NAME).getDataFolder(), BONFIRE_SUBFOLDER);
+        dataFolder.mkdirs();
+
+        FileConfiguration config = new YamlConfiguration();
+        List<Bonfire> bonfires = new LinkedList<>();
+
+        Bonfire.getBonfires().forEach((k, v) -> {
+            bonfires.add(v);
+        });
+
+        config.set(BONFIRE_KEY, bonfires);
+        try {
+            config.save(new File(dataFolder, BONFIRE_FILENAME));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void enable () {
+        File dataFolder = new File(Bukkit.getPluginManager().getPlugin(MineSouls.PLUGIN_NAME).getDataFolder(), BONFIRE_SUBFOLDER);
+        dataFolder.mkdirs();
+
+        FileConfiguration config = new YamlConfiguration();
+        File bonfireFile = new File(dataFolder, BONFIRE_FILENAME);
+        if(bonfireFile.exists()) {
+            try {
+                config.load(bonfireFile);
+
+                List<Object> list = (List<Object>) config.getList(BONFIRE_KEY);
+                HashMap<Location, Bonfire> bonfires = new HashMap<>();
+                for(Object o : list) {
+                    Bonfire b = (Bonfire) o;
+                    bonfires.put(b.getLocation(), b);
+                }
+
+                Bonfire.setBonfires(bonfires);
+            } catch (IOException | InvalidConfigurationException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     public String getName() {
