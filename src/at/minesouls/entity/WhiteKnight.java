@@ -3,7 +3,6 @@ package at.minesouls.entity;
 import at.jojokobi.mcutil.entity.CustomEntity;
 import at.jojokobi.mcutil.entity.EntityHandler;
 import at.jojokobi.mcutil.entity.EntityMapData;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
@@ -31,9 +30,7 @@ public class WhiteKnight extends CustomEntity<Skeleton> {
         Skeleton skeleton = location.getWorld().spawn(location, Skeleton.class);
         ItemStack skull = new ItemStack(Material.PLAYER_HEAD);
         SkullMeta meta = (SkullMeta) skull.getItemMeta();
-        OfflinePlayer player = Bukkit.getOfflinePlayer(UUID.fromString("39122d35-27c3-4806-b24d-9b975923031c"));
 
-        meta.setOwningPlayer(player);
         skull.setItemMeta(meta);
 
         skeleton.getEquipment().setHelmet(skull);

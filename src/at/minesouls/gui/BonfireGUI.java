@@ -8,6 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -18,6 +19,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class BonfireGUI extends InventoryGUI {
 
     private HashMap<ItemStack, Bonfire> bonfires = new HashMap<>();
+    private Runnable onClose;
 
     public BonfireGUI(Player owner, String name) {
         super(owner, Bukkit.createInventory(owner, InventoryType.PLAYER, name));
@@ -51,5 +53,16 @@ public class BonfireGUI extends InventoryGUI {
             getOwner().teleport(location);
             close();
         }
+    }
+
+    public void setOnClose (Runnable r) {
+        this.onClose = r;
+    }
+
+    @Override
+    protected InventoryGUI onInventoryClose(InventoryCloseEvent event) {
+        if(this.onClose != null)
+            onClose.run();
+        return super.onInventoryClose(event);
     }
 }

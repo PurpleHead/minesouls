@@ -1,14 +1,15 @@
 package at.minesouls;
 import at.minesouls.blocks.Bonfire;
 import at.minesouls.commands.BonfireCommand;
+import at.minesouls.commands.SpawnGroupToolsCommand;
 import at.minesouls.entity.ZombieWarrior;
 import at.minesouls.player.MineSoulsPlayer;
+import at.minesouls.spawngroups.CustomEntitySpawn;
+import at.minesouls.spawngroups.MinecraftEntitySpawn;
+import at.minesouls.spawngroups.SpawnGroup;
+import at.minesouls.spawngroups.SpawnGroupHandler;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
@@ -20,6 +21,9 @@ import at.jojokobi.mcutil.entity.spawns.CustomSpawnsHandler;
 import at.jojokobi.mcutil.entity.spawns.FunctionSpawn;
 import at.minesouls.entity.WalkingColossusBoss;
 
+import java.util.Arrays;
+import java.util.stream.Collectors;
+
 public class MineSouls extends JavaPlugin {
 
     public static final String PLUGIN_NAME = "MineSouls";
@@ -28,18 +32,21 @@ public class MineSouls extends JavaPlugin {
     private static final String BONFIRE_FILENAME = "bonfires.yml";
     private static final String BONFIRE_SUBFOLDER = "bonfires";
 
-
     @Override
     public void onEnable() {
         super.onEnable();
         ConfigurationSerialization.registerClass(Bonfire.class);
         ConfigurationSerialization.registerClass(MineSoulsPlayer.class);
+        ConfigurationSerialization.registerClass(SpawnGroup.class);
+        ConfigurationSerialization.registerClass(CustomEntitySpawn.class);
+        ConfigurationSerialization.registerClass(MinecraftEntitySpawn.class);
 
         loadConfiguration();
 
         getServer().getPluginManager().registerEvents(new MineSoulsListener(), this);
         getCommand(BonfireCommand.COMMAND).setExecutor(new BonfireCommand());
-
+        getCommand(SpawnGroupToolsCommand.COMMAND).setExecutor(new SpawnGroupToolsCommand());
+        
         CustomSpawnsHandler.getInstance().addItem(new FunctionSpawn(getName().toLowerCase(), "walking_colossus", l -> new WalkingColossusBoss(l, null)));
         CustomSpawnsHandler.getInstance().addItem(new FunctionSpawn(getName().toLowerCase(), "zombie_warrior", l -> new ZombieWarrior(l, null)));
 
@@ -55,49 +62,18 @@ public class MineSouls extends JavaPlugin {
 
     private void saveConfiguration () {
         // Bonfires
-        {
-            File dataFolder = new File(Bukkit.getPluginManager().getPlugin(MineSouls.PLUGIN_NAME).getDataFolder(), BONFIRE_SUBFOLDER);
-            dataFolder.mkdirs();
-
-            FileConfiguration config = new YamlConfiguration();
-            List<Bonfire> bonfires = new LinkedList<>();
-
-            Bonfire.getBonfires().forEach((k, v) -> {
-                bonfires.add(v);
-            });
-
-            config.set(BONFIRE_KEY, bonfires);
-            try {
-                config.save(new File(dataFolder, BONFIRE_FILENAME));
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        Bonfire.disable();
+        SpawnGroupHandler.getInstance().disable();
     }
 
     private void loadConfiguration () {
-        File dataFolder = new File(Bukkit.getPluginManager().getPlugin(MineSouls.PLUGIN_NAME).getDataFolder(), BONFIRE_SUBFOLDER);
-        dataFolder.mkdirs();
+        Bonfire.enable();
+        SpawnGroupHandler.getInstance().enable();
+    }
 
-        FileConfiguration config = new YamlConfiguration();
-        File bonfireFile = new File(dataFolder, BONFIRE_FILENAME);
-        if(bonfireFile.exists()) {
-            try {
-                config.load(bonfireFile);
-
-                List<Object> list = (List<Object>) config.getList(BONFIRE_KEY);
-                HashMap<Location, Bonfire> bonfires = new HashMap<>();
-                for(Object o : list) {
-                    Bonfire b = (Bonfire) o;
-                    bonfires.put(b.getLocation(), b);
-                }
-
-                Bonfire.setBonfires(bonfires);
-            } catch (IOException | InvalidConfigurationException e) {
-                e.printStackTrace();
-            }
-        }
-
+    public static String stringRange (String[] string, int begin, int end) {
+        String[] array = Arrays.copyOfRange(string, begin, end);
+        return Arrays.stream(array).collect(Collectors.joining(" "));
     }
 
 }

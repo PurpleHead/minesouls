@@ -1,8 +1,8 @@
 package at.minesouls.spawngroups;
 
-import at.jojokobi.mcutil.NamespacedEntry;
 import at.jojokobi.mcutil.TypedMap;
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
 import java.util.HashMap;
@@ -11,6 +11,7 @@ import java.util.Map;
 public class MinecraftEntitySpawn extends EntitySpawn {
 
     private EntityType type;
+    private Entity entity;
 
     public MinecraftEntitySpawn (Location loc, EntityType type) {
         super(loc);
@@ -20,7 +21,13 @@ public class MinecraftEntitySpawn extends EntitySpawn {
     @Override
     public void spawn() {
         Location loc = getLocation();
-        loc.getWorld().spawnEntity(loc, type);
+        entity = loc.getWorld().spawnEntity(loc, type);
+    }
+
+    @Override
+    public void remove() {
+        if (entity != null)
+           entity.remove();
     }
 
     @Override

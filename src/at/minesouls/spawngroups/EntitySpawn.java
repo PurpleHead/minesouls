@@ -13,6 +13,8 @@ public abstract class EntitySpawn implements ConfigurationSerializable {
 
     public abstract void spawn();
 
+    public abstract void remove();
+
     public void setLocation(Location location) {
         this.location = location;
     }

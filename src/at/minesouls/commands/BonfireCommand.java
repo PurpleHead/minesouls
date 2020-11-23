@@ -1,5 +1,6 @@
 package at.minesouls.commands;
 
+import at.minesouls.MineSouls;
 import at.minesouls.blocks.Bonfire;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -10,6 +11,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 public class BonfireCommand implements CommandExecutor {
 
@@ -20,7 +22,6 @@ public class BonfireCommand implements CommandExecutor {
         if(strings.length > 0 && strings[0].equals("clear")) {
             Bonfire.clearAll();
         } else if (commandSender instanceof Player) {
-            Bukkit.getConsoleSender().sendMessage(ChatColor.GREEN + " " + Arrays.toString(strings));
             Player player = (Player) commandSender;
 
             if (strings.length >= 4) {
@@ -30,7 +31,7 @@ public class BonfireCommand implements CommandExecutor {
                     int z = (strings[2].equals("~") ? player.getLocation().getBlockZ() : Integer.parseInt(strings[2]) - 1);
                     Bukkit.broadcastMessage(x + " " + y + " " + z);
                     player.getWorld().getBlockAt(x, y, z).setType(Material.SOUL_CAMPFIRE);
-                    Bonfire.getBonfire(player.getWorld().getBlockAt(x, y, z).getLocation(), concatArray(strings, 3));
+                    Bonfire.getBonfire(player.getWorld().getBlockAt(x, y, z).getLocation(), MineSouls.stringRange(strings, 3, strings.length));
                 } catch (NumberFormatException e) {
                     return false;
                 }
@@ -38,16 +39,6 @@ public class BonfireCommand implements CommandExecutor {
                 return false;
         }
         return true;
-    }
-
-    private String concatArray (String[] array, int index) {
-        String string = "";
-
-        for (int i = index; i < array.length; i++) {
-            string += array[i] + " ";
-        }
-
-        return string;
     }
 
 }
