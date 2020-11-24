@@ -16,6 +16,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
@@ -93,6 +94,13 @@ public class MineSoulsListener implements Listener {
                 }
             }
         }
+    }
+
+    @EventHandler
+    public void onPlayerDeath (PlayerDeathEvent event) {
+        handler.despawnAll();
+        handler.setAllRested();
+        handler.spawnGroup(MineSoulsPlayer.getPlayer(event.getEntity()).getCurrentArea());
     }
 
     @EventHandler
