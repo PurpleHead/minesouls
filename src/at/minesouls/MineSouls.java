@@ -12,11 +12,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.java.JavaPlugin;
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import at.jojokobi.mcutil.entity.spawns.CustomSpawnsHandler;
 import at.jojokobi.mcutil.entity.spawns.FunctionSpawn;
 import at.minesouls.entity.BlackKnightBoss;
@@ -29,9 +24,9 @@ public class MineSouls extends JavaPlugin {
 
     public static final String PLUGIN_NAME = "MineSouls";
 
-    private static final String BONFIRE_KEY = "bonfire";
-    private static final String BONFIRE_FILENAME = "bonfires.yml";
-    private static final String BONFIRE_SUBFOLDER = "bonfires";
+//    private static final String BONFIRE_KEY = "bonfire";
+//    private static final String BONFIRE_FILENAME = "bonfires.yml";
+//    private static final String BONFIRE_SUBFOLDER = "bonfires";
 
     @Override
     public void onEnable() {

@@ -119,7 +119,7 @@ public class MineSoulsListener implements Listener {
             FileConfiguration config = new YamlConfiguration();
             config.set(PLAYER_KEY, MineSoulsPlayer.getPlayer(event.getPlayer()));
 
-            MineSoulsPlayer.getLoadedPlayers().remove(event.getPlayer());
+            MineSoulsPlayer.getLoadedPlayers().remove(event.getPlayer().getUniqueId());
             try {
                 config.save(new File(dataFolder, event.getPlayer().getUniqueId() + ".yml"));
             } catch (IOException e) {

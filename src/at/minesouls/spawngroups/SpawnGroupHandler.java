@@ -75,7 +75,7 @@ public class SpawnGroupHandler {
             try {
                 config.load(spawngroupFile);
 
-                List<Object> list = (List<Object>) config.getList(SPAWNGROUP_KEY);
+                List<?> list = config.getList(SPAWNGROUP_KEY);
                 Map<String, SpawnGroup> spawnGroupMap = new HashMap<>();
                 for(Object o : list) {
                     SpawnGroup s = (SpawnGroup) o;

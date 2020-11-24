@@ -14,7 +14,7 @@ public class MineSoulsPlayer implements ConfigurationSerializable {
     private static final String LAST_INTERACT_KEY = "lastInteract";
     private static final String BONFIRES_KEY = "bonfires";
     private static final String CURRENT_AREA_KEY = "currentArea";
-    private static final String LAST_BONFIRE_USE_KEY = "lastBonfireUse";
+//    private static final String LAST_BONFIRE_USE_KEY = "lastBonfireUse";
 
     private static HashMap<UUID, MineSoulsPlayer> loadedPlayers = new HashMap<>();
 

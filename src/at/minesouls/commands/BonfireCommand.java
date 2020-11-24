@@ -3,15 +3,11 @@ package at.minesouls.commands;
 import at.minesouls.MineSouls;
 import at.minesouls.blocks.Bonfire;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 public class BonfireCommand implements CommandExecutor {
 

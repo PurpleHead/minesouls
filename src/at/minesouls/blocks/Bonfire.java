@@ -89,7 +89,7 @@ public class Bonfire implements ConfigurationSerializable {
             try {
                 config.load(bonfireFile);
 
-                List<Object> list = (List<Object>) config.getList(BONFIRE_KEY);
+                List<?> list = config.getList(BONFIRE_KEY);
                 HashMap<Location, Bonfire> bonfires = new HashMap<>();
                 for(Object o : list) {
                     Bonfire b = (Bonfire) o;
