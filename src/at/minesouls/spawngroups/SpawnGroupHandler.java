@@ -9,10 +9,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class SpawnGroupHandler {
 
@@ -22,7 +19,7 @@ public class SpawnGroupHandler {
     private static final String FILENAME = "spawn-groups.yml";
     private static final String SPAWNGROUP_KEY = "spawngroup";
 
-    private Map<String, SpawnGroup> spawnGroupMap = new HashMap<>();
+    private Map<UUID, SpawnGroup> spawnGroupMap = new HashMap<>();
 
     private SpawnGroupHandler () {}
 
@@ -33,9 +30,9 @@ public class SpawnGroupHandler {
         return instance;
     }
 
-    public void spawnGroup(String name) {
-        exists(name);
-        SpawnGroup group = spawnGroupMap.get(name);
+    public void spawnGroup(UUID uuid) {
+        exists(uuid);
+        SpawnGroup group = spawnGroupMap.get(uuid);
         group.setRested(false);
         group.spawnAll();
     }
@@ -48,19 +45,19 @@ public class SpawnGroupHandler {
         spawnGroupMap.forEach((k, v) -> v.setRested(true));
     }
 
-    public boolean hasRested (String area) {
-        exists(area);
-        return spawnGroupMap.get(area).hasRested();
+    public boolean hasRested (UUID uuid) {
+        exists(uuid);
+        return spawnGroupMap.get(uuid).hasRested();
     }
 
-    public void addSpawn (String area, String key, Location loc) {
-        exists(area);
-        spawnGroupMap.get(area).addSpawn(key, loc);
+    public void addSpawn (UUID uuid, String key, Location loc) {
+        exists(uuid);
+        spawnGroupMap.get(uuid).addSpawn(key, loc);
     }
 
-    private void exists(String area) {
-        if(!spawnGroupMap.containsKey(area))
-            spawnGroupMap.put(area, new SpawnGroup(area));
+    private void exists(UUID uuid) {
+        if(!spawnGroupMap.containsKey(uuid))
+            spawnGroupMap.put(uuid, new SpawnGroup(uuid));
     }
 
     public void enable () {
@@ -76,10 +73,10 @@ public class SpawnGroupHandler {
                 config.load(spawngroupFile);
 
                 List<Object> list = (List<Object>) config.getList(SPAWNGROUP_KEY);
-                Map<String, SpawnGroup> spawnGroupMap = new HashMap<>();
+                Map<UUID, SpawnGroup> spawnGroupMap = new HashMap<>();
                 for(Object o : list) {
                     SpawnGroup s = (SpawnGroup) o;
-                    spawnGroupMap.put(s.getName(), s);
+                    spawnGroupMap.put(s.getUuid(), s);
                 }
 
                 setSpawnGroupMap(spawnGroupMap);
@@ -106,11 +103,11 @@ public class SpawnGroupHandler {
         }
     }
 
-    public Map<String, SpawnGroup> getSpawnGroupMap() {
+    public Map<UUID, SpawnGroup> getSpawnGroupMap() {
         return spawnGroupMap;
     }
 
-    public void setSpawnGroupMap(Map<String, SpawnGroup> spawnGroupMap) {
+    public void setSpawnGroupMap(Map<UUID, SpawnGroup> spawnGroupMap) {
         this.spawnGroupMap = spawnGroupMap;
     }
 }

@@ -1,6 +1,7 @@
 package at.minesouls.player;
 
 import at.jojokobi.mcutil.TypedMap;
+import at.minesouls.areas.Area;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -14,14 +15,13 @@ public class MineSoulsPlayer implements ConfigurationSerializable {
     private static final String LAST_INTERACT_KEY = "lastInteract";
     private static final String BONFIRES_KEY = "bonfires";
     private static final String CURRENT_AREA_KEY = "currentArea";
-    private static final String LAST_BONFIRE_USE_KEY = "lastBonfireUse";
 
     private static HashMap<UUID, MineSoulsPlayer> loadedPlayers = new HashMap<>();
 
     private List<Location> bonfires = new LinkedList<>();
     private long lastInteract = 0;
     private UUID uuid;
-    private String currentArea = "";
+    private Area currentArea = null;
 
     private MineSoulsPlayer(UUID uuid) {
         this.uuid = uuid;
@@ -86,11 +86,11 @@ public class MineSoulsPlayer implements ConfigurationSerializable {
         this.uuid = uuid;
     }
 
-    public String getCurrentArea() {
+    public Area getCurrentArea() {
         return currentArea;
     }
 
-    public void setCurrentArea(String currentArea) {
+    public void setCurrentArea(Area currentArea) {
         this.currentArea = currentArea;
     }
 
@@ -113,7 +113,7 @@ public class MineSoulsPlayer implements ConfigurationSerializable {
 
         player.setLastInteract(t.getLong(LAST_INTERACT_KEY));
         player.setBonfires(t.getList(BONFIRES_KEY, Location.class));
-        player.setCurrentArea(t.getString(CURRENT_AREA_KEY));
+        player.setCurrentArea(t.get(CURRENT_AREA_KEY, Area.class, null));
 
         return player;
     }

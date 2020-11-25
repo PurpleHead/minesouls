@@ -11,3 +11,6 @@ commands:
   sgtool:
     description: Gives a spawnmarker item to the player
     usage: /sgtool <key> <area>
+  area:
+    description: Gives areamarker item to the player
+    usage: /area <name>
