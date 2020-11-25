@@ -1,5 +1,8 @@
 package at.minesouls;
 import at.jojokobi.mcutil.JojokobiUtilPlugin;
+import at.minesouls.areas.Area;
+import at.minesouls.areas.AreaMarkerHandler;
+import at.minesouls.areas.AreaMarker;
 import at.minesouls.blocks.Bonfire;
 import at.minesouls.gui.BonfireGUI;
 import at.minesouls.player.MineSoulsPlayer;
@@ -8,9 +11,6 @@ import org.bukkit.*;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -27,15 +27,16 @@ import org.bukkit.potion.PotionEffect;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
+import java.util.UUID;
 
 public class MineSoulsListener implements Listener {
 
     private static final String PLAYER_KEY = "player";
     private static final String PLAYER_SUBFOLDER = "players";
 
-    private SpawnGroupHandler handler = SpawnGroupHandler.getInstance();
+    private SpawnGroupHandler spawnGroupHandler = SpawnGroupHandler.getInstance();
+    private AreaMarkerHandler areaMarkerHandler = AreaMarkerHandler.getInstance();
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent event) {
@@ -59,36 +60,33 @@ public class MineSoulsListener implements Listener {
 
                     BonfireGUI bonfireGUI = new BonfireGUI(player, bonfire.getName());
                     JavaPlugin.getPlugin(JojokobiUtilPlugin.class).getGuiHandler().addGUI(bonfireGUI);
-                    bonfireGUI.setOnClose(() -> handler.spawnGroup(mineSoulsPlayer.getCurrentArea()));
-                    handler.despawnAll();
+                    bonfireGUI.setOnClose(() -> spawnGroupHandler.spawnGroup(mineSoulsPlayer.getCurrentArea().getUuid()));
+                    spawnGroupHandler.despawnAll();
                     bonfireGUI.show();
-                    handler.setAllRested();
+                    spawnGroupHandler.setAllRested();
                 }
                 if(event.getPlayer().getInventory().getItemInMainHand().getType() == (Material.SHEARS)) {
-                    ArmorStand armorStand;
                     ItemStack shears = event.getPlayer().getInventory().getItemInMainHand();
                     String displayName = shears.getItemMeta().getDisplayName();
                     String[] split = displayName.split("::");
 
                     if(displayName.startsWith("Area::") && split.length > 1) {
                         Location loc = event.getClickedBlock().getLocation();
-                        loc.add(0.5, 0, 0.5);
+                        Area area = Area.getByUUID(UUID.fromString(split[1]));
 
-                        event.getClickedBlock().setType(Material.AIR);
-
-                        armorStand = (ArmorStand) event.getClickedBlock().getWorld().spawnEntity(loc, EntityType.ARMOR_STAND);
-                        armorStand.setVisible(false);
-                        armorStand.setGravity(false);
-                        armorStand.setInvulnerable(true);
-                        armorStand.setCustomName(displayName);
-                        armorStand.setCustomNameVisible(false);
+                        if(area != null) {
+                            event.getClickedBlock().setType(Material.AIR);
+                            areaMarkerHandler.addMarker(loc, new AreaMarker(area, loc));
+                            event.getClickedBlock().getWorld().playEffect(loc, Effect.MOBSPAWNER_FLAMES, 100);
+                            event.getClickedBlock().getWorld().playSound(loc, Sound.ENTITY_CAT_HISS, 1, 1);
+                        }
                     } else if(displayName.startsWith("Spawn::") && split.length > 1) {
                         String[] spaceSplit = split[1].split(" ");
                         Location loc = event.getClickedBlock().getLocation().clone();
                         loc.add(0, 1, 0);
-                        handler.addSpawn(MineSouls.stringRange(spaceSplit, 1, spaceSplit.length), spaceSplit[0], loc);
+                        spawnGroupHandler.addSpawn(UUID.fromString(MineSouls.stringRange(spaceSplit, 1, spaceSplit.length)), spaceSplit[0], loc);
                         event.getClickedBlock().getWorld().playEffect(loc, Effect.MOBSPAWNER_FLAMES, 100);
-                        event.getClickedBlock().getWorld().playSound(loc, Sound.BLOCK_BARREL_OPEN, 10, 1);
+                        event.getClickedBlock().getWorld().playSound(loc, Sound.BLOCK_BARREL_OPEN, 1, 1);
                         mineSoulsPlayer.setLastInteract(System.currentTimeMillis());
                     }
                 }
@@ -98,9 +96,9 @@ public class MineSoulsListener implements Listener {
 
     @EventHandler
     public void onPlayerDeath (PlayerDeathEvent event) {
-        handler.despawnAll();
-        handler.setAllRested();
-        handler.spawnGroup(MineSoulsPlayer.getPlayer(event.getEntity()).getCurrentArea());
+        spawnGroupHandler.despawnAll();
+        spawnGroupHandler.setAllRested();
+        spawnGroupHandler.spawnGroup(MineSoulsPlayer.getPlayer(event.getEntity()).getCurrentArea().getUuid());
     }
 
     @EventHandler
@@ -119,7 +117,7 @@ public class MineSoulsListener implements Listener {
             FileConfiguration config = new YamlConfiguration();
             config.set(PLAYER_KEY, MineSoulsPlayer.getPlayer(event.getPlayer()));
 
-            MineSoulsPlayer.getLoadedPlayers().remove(event.getPlayer());
+            MineSoulsPlayer.getLoadedPlayers().remove(event.getPlayer().getUniqueId());
             try {
                 config.save(new File(dataFolder, event.getPlayer().getUniqueId() + ".yml"));
             } catch (IOException e) {
@@ -156,21 +154,23 @@ public class MineSoulsListener implements Listener {
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent event) {
-        Collection<Entity> entities = event.getPlayer().getWorld().getNearbyEntities(event.getPlayer().getLocation(), 0.5, 0.5, 0.5);
         MineSoulsPlayer player = MineSoulsPlayer.getPlayer(event.getPlayer());
-        entities.forEach(entity -> {
-            if(entity.getType() == EntityType.ARMOR_STAND && entity.getCustomName() != null && entity.getCustomName().startsWith("Area::")) {
-                String split = entity.getCustomName().split("Area::")[1];
-                if(!player.getCurrentArea().equalsIgnoreCase(split)) {
-                    player.setCurrentArea(split);
-                    event.getPlayer().sendTitle(split, null, 10, 20, 10);
-                    event.getPlayer().playSound(event.getPlayer().getLocation(), "minesouls.area", 100.0f, 1.0f);
-                    if (handler.hasRested(split)) {
-                        handler.spawnGroup(split);
-                    }
+        Area area = areaMarkerHandler.isInArea(event.getPlayer().getLocation());
+
+        if (area != null) {
+            if(player.getCurrentArea() == null) {
+                player.setCurrentArea(area);
+            }
+            if(!player.getCurrentArea().getUuid().equals(area.getUuid())){
+                player.setCurrentArea(area);
+                event.getPlayer().sendTitle(area.getName(), null, 10, 50, 10);
+                event.getPlayer().playSound(event.getPlayer().getLocation(), "minesouls.area", 1.0f, 1.0f);
+                if(spawnGroupHandler.hasRested(area.getUuid())) {
+                    spawnGroupHandler.spawnGroup(area.getUuid());
                 }
             }
-        });
+        }
+
         //TODO Activate
         /*if(player.getCurrentArea().equals("Darkwood") && event.getPlayer().getLocation().getBlock().getLightLevel() < 9) {
             event.getPlayer().addPotionEffect(new PotionEffect(PotionEffectType.BLINDNESS, 100, 1));
