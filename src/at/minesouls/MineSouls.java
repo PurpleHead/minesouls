@@ -9,6 +9,7 @@ import at.minesouls.commands.BonfireCommand;
 import at.minesouls.commands.SpawnGroupToolsCommand;
 import at.minesouls.entity.ZombieWarrior;
 import at.minesouls.player.MineSoulsPlayer;
+import at.minesouls.player.MineSoulsPlayerStats;
 import at.minesouls.spawngroups.CustomEntitySpawn;
 import at.minesouls.spawngroups.MinecraftEntitySpawn;
 import at.minesouls.spawngroups.SpawnGroup;
@@ -39,6 +40,7 @@ public class MineSouls extends JavaPlugin {
         ConfigurationSerialization.registerClass(Area.class);
         ConfigurationSerialization.registerClass(RoundedLocation.class);
         ConfigurationSerialization.registerClass(AreaMarker.class);
+        ConfigurationSerialization.registerClass(MineSoulsPlayerStats.class);
 
         loadConfiguration();
 

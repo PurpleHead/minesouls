@@ -100,10 +100,10 @@ public class MineSoulsListener implements Listener {
     }
 
     @EventHandler
-    public void onEnemyKill (EntityDeathEvent event) {
+    public void onEntityDeath (EntityDeathEvent event) {
         LivingEntity e = event.getEntity();
         if(e.getKiller() != null && e.getKiller().getPlayer() != null) {
-            MineSoulsPlayer player = MineSoulsPlayer.getPlayer(e.getKiller().getPlayer());
+            MineSoulsPlayer player = MineSoulsPlayer.getPlayer(e.getKiller());
             if(player != null)
                 player.addKill(e);
         }

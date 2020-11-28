@@ -25,7 +25,7 @@ public class MineSoulsPlayer implements ConfigurationSerializable {
     private UUID uuid;
     private Area currentArea = null;
 
-    private MineSoulsPlayerStats stats = new MineSoulsPlayerStats();
+    private MineSoulsPlayerStats stats;
 
     private MineSoulsPlayer(UUID uuid) {
         this.uuid = uuid;
@@ -38,6 +38,8 @@ public class MineSoulsPlayer implements ConfigurationSerializable {
             mineSoulsPlayer = new MineSoulsPlayer(uuid);
             loadedPlayers.put(uuid, mineSoulsPlayer);
         }
+        if(mineSoulsPlayer.getStats() == null)
+            mineSoulsPlayer.setStats(new MineSoulsPlayerStats(uuid));
         return mineSoulsPlayer;
     }
 

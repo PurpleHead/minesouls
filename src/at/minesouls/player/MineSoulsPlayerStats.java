@@ -1,10 +1,13 @@
 package at.minesouls.player;
 
 import at.jojokobi.mcutil.TypedMap;
+import org.bukkit.Bukkit;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class MineSoulsPlayerStats implements ConfigurationSerializable {
 
@@ -15,6 +18,7 @@ public class MineSoulsPlayerStats implements ConfigurationSerializable {
     private static final String VITALITY_KEY = "vitality";
     private static final String SOULS_LEVEL_KEY = "soulLevel";
     private static final String SOULS_KEY = "souls";
+    private static final String UUID_KEY = "uuid";
 
     private int healthLevel = 0;
     private int staminaLevel = 0;
@@ -24,7 +28,10 @@ public class MineSoulsPlayerStats implements ConfigurationSerializable {
     private int soulsLevel = 12;
     private int souls = 0;
 
-    public MineSoulsPlayerStats () {
+    private UUID uuid;
+
+    public MineSoulsPlayerStats (UUID uuid) {
+        this.uuid = uuid;
     }
 
     public void levelUp (StatsType type) {
@@ -35,6 +42,7 @@ public class MineSoulsPlayerStats implements ConfigurationSerializable {
             switch(type) {
                 case HEALTH:
                     healthLevel++;
+                    Bukkit.getPlayer(uuid).getAttribute(Attribute.GENERIC_MAX_HEALTH).setBaseValue(20 + (healthLevel));
                     break;
                 case STAMINA:
                     staminaLevel++;
@@ -112,6 +120,14 @@ public class MineSoulsPlayerStats implements ConfigurationSerializable {
         this.souls = souls;
     }
 
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
+    }
+
     @Override
     public Map<String, Object> serialize() {
         Map<String, Object> map = new HashMap<>();
@@ -122,13 +138,15 @@ public class MineSoulsPlayerStats implements ConfigurationSerializable {
         map.put(VITALITY_KEY, getVitalityLevel());
         map.put(SOULS_LEVEL_KEY, getSoulsLevel());
         map.put(SOULS_KEY, getSouls());
+        map.put(UUID_KEY, getUuid().toString());
 
-        return null;
+        return map;
     }
 
     public static MineSoulsPlayerStats deserialize (Map<String, Object> map) {
-        MineSoulsPlayerStats stats = new MineSoulsPlayerStats();
         TypedMap t = new TypedMap(map);
+        UUID uuid = UUID.fromString(t.getString(UUID_KEY));
+        MineSoulsPlayerStats stats = new MineSoulsPlayerStats(uuid);
 
         stats.setHealthLevel(t.getInt(HEALTH_KEY));
         stats.setStaminaLevel(t.getInt(STAMINA_KEY));
