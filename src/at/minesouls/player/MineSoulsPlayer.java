@@ -17,6 +17,7 @@ public class MineSoulsPlayer implements ConfigurationSerializable {
     private static final String CURRENT_AREA_KEY = "currentArea";
     private static final String HEALTH_KEY = "health";
     private static final String STAMINA_KEY = "stamina";
+    private static final String STRENGTH_KEY = "strength";
     private static final String DEXTERITY_KEY = "dexterity";
     private static final String VITALITY_KEY = "vitality";
 
@@ -152,6 +153,11 @@ public class MineSoulsPlayer implements ConfigurationSerializable {
         map.put(UUID_KEY, getUuid().toString());
         map.put(BONFIRES_KEY, List.copyOf(getBonfires()));
         map.put(CURRENT_AREA_KEY, getCurrentArea());
+        map.put(HEALTH_KEY, getHealthLevel());
+        map.put(STAMINA_KEY, getStaminaLevel());
+        map.put(DEXTERITY_KEY, getDexterityLevel());
+        map.put(STRENGTH_KEY, getStrengthLevel());
+        map.put(VITALITY_KEY, getVitalityLevel());
 
         return map;
     }
@@ -164,6 +170,11 @@ public class MineSoulsPlayer implements ConfigurationSerializable {
         player.setLastInteract(t.getLong(LAST_INTERACT_KEY));
         player.setBonfires(t.getList(BONFIRES_KEY, Location.class));
         player.setCurrentArea(t.get(CURRENT_AREA_KEY, Area.class, null));
+        player.setHealthLevel(t.getInt(HEALTH_KEY));
+        player.setStaminaLevel(t.getInt(STAMINA_KEY));
+        player.setDexterityLevel(t.getInt(DEXTERITY_KEY));
+        player.setStrengthLevel(t.getInt(STRENGTH_KEY));
+        player.setVitalityLevel(t.getInt(VITALITY_KEY));
 
         return player;
     }

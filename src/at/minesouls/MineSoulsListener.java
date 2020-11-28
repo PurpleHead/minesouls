@@ -60,7 +60,11 @@ public class MineSoulsListener implements Listener {
 
                     BonfireGUI bonfireGUI = new BonfireGUI(player, bonfire.getName());
                     JavaPlugin.getPlugin(JojokobiUtilPlugin.class).getGuiHandler().addGUI(bonfireGUI);
-                    bonfireGUI.setOnClose(() -> spawnGroupHandler.spawnGroup(mineSoulsPlayer.getCurrentArea().getUuid()));
+                    bonfireGUI.setOnClose(() -> {
+                        if (mineSoulsPlayer != null && mineSoulsPlayer.getCurrentArea() != null) {
+                            spawnGroupHandler.spawnGroup(mineSoulsPlayer.getCurrentArea().getUuid());
+                        }
+                    });
                     spawnGroupHandler.despawnAll();
                     bonfireGUI.show();
                     spawnGroupHandler.setAllRested();
@@ -78,7 +82,6 @@ public class MineSoulsListener implements Listener {
                             event.getClickedBlock().setType(Material.AIR);
                             areaMarkerHandler.addMarker(loc, new AreaMarker(area, loc));
                             event.getClickedBlock().getWorld().playEffect(loc, Effect.MOBSPAWNER_FLAMES, 100);
-                            event.getClickedBlock().getWorld().playSound(loc, Sound.ENTITY_CAT_HISS, 1, 1);
                         }
                     } else if(displayName.startsWith("Spawn::") && split.length > 1) {
                         String[] spaceSplit = split[1].split(" ");
