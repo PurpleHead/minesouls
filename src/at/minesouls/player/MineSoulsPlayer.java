@@ -15,6 +15,10 @@ public class MineSoulsPlayer implements ConfigurationSerializable {
     private static final String LAST_INTERACT_KEY = "lastInteract";
     private static final String BONFIRES_KEY = "bonfires";
     private static final String CURRENT_AREA_KEY = "currentArea";
+    private static final String HEALTH_KEY = "health";
+    private static final String STAMINA_KEY = "stamina";
+    private static final String DEXTERITY_KEY = "dexterity";
+    private static final String VITALITY_KEY = "vitality";
 
     private static HashMap<UUID, MineSoulsPlayer> loadedPlayers = new HashMap<>();
 
@@ -22,6 +26,12 @@ public class MineSoulsPlayer implements ConfigurationSerializable {
     private long lastInteract = 0;
     private UUID uuid;
     private Area currentArea = null;
+
+    private int healthLevel = 0;
+    private int staminaLevel = 0;
+    private int dexterityLevel = 0;
+    private int strengthLevel = 0;
+    private int vitalityLevel = 0;
 
     private MineSoulsPlayer(UUID uuid) {
         this.uuid = uuid;
@@ -92,6 +102,46 @@ public class MineSoulsPlayer implements ConfigurationSerializable {
 
     public void setCurrentArea(Area currentArea) {
         this.currentArea = currentArea;
+    }
+
+    public int getHealthLevel() {
+        return healthLevel;
+    }
+
+    public void setHealthLevel(int healthLevel) {
+        this.healthLevel = healthLevel;
+    }
+
+    public int getStaminaLevel() {
+        return staminaLevel;
+    }
+
+    public void setStaminaLevel(int staminaLevel) {
+        this.staminaLevel = staminaLevel;
+    }
+
+    public int getDexterityLevel() {
+        return dexterityLevel;
+    }
+
+    public void setDexterityLevel(int dexterityLevel) {
+        this.dexterityLevel = dexterityLevel;
+    }
+
+    public int getStrengthLevel() {
+        return strengthLevel;
+    }
+
+    public void setStrengthLevel(int strengthLevel) {
+        this.strengthLevel = strengthLevel;
+    }
+
+    public int getVitalityLevel() {
+        return vitalityLevel;
+    }
+
+    public void setVitalityLevel(int vitalityLevel) {
+        this.vitalityLevel = vitalityLevel;
     }
 
     @Override

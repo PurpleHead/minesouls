@@ -12,6 +12,10 @@ import java.util.*;
 
 public class SpawnGroup implements ConfigurationSerializable {
 
+    private static final String UUID_KEY = "uuid";
+    private static final String ENTITY_SPAWNS_KEY = "entitySpawns";
+    private static final String HAS_RESTED_KEY = "hasRested";
+
     private UUID uuid;
     private List<EntitySpawn> entitySpawns = new LinkedList<>();
     private boolean rested = true;
@@ -71,17 +75,17 @@ public class SpawnGroup implements ConfigurationSerializable {
     @Override
     public Map<String, Object> serialize() {
         Map<String, Object> map = new HashMap<>();
-        map.put("uuid", uuid.toString());
-        map.put("entitySpawns", entitySpawns);
-        map.put("hasRested", hasRested());
+        map.put(UUID_KEY, uuid.toString());
+        map.put(ENTITY_SPAWNS_KEY, entitySpawns);
+        map.put(HAS_RESTED_KEY, hasRested());
         return map;
     }
 
     public static SpawnGroup deserialize(Map<String, Object> map) {
         TypedMap tMap = new TypedMap(map);
-        SpawnGroup group = new SpawnGroup(UUID.fromString(tMap.getString("uuid")));
-        group.entitySpawns.addAll(tMap.getList("entitySpawns", EntitySpawn.class));
-        group.setRested(tMap.getBoolean("hasRested"));
+        SpawnGroup group = new SpawnGroup(UUID.fromString(tMap.getString(UUID_KEY)));
+        group.entitySpawns.addAll(tMap.getList(ENTITY_SPAWNS_KEY, EntitySpawn.class));
+        group.setRested(tMap.getBoolean(HAS_RESTED_KEY));
         return group;
     }
 

@@ -17,6 +17,8 @@ import java.util.Map;
 public class CustomEntitySpawn extends EntitySpawn {
 
     private static final String ENTITY_KEY = "entities";
+    private static final String NAMESPACE_KEY = "key";
+    private static final String LOCATION_KEY = "location";
 
     private NamespacedEntry key;
     private List<CustomEntity<?>> entities = new LinkedList<>();
@@ -53,15 +55,15 @@ public class CustomEntitySpawn extends EntitySpawn {
     @Override
     public Map<String, Object> serialize() {
         Map<String, Object> map = new HashMap<>();
-        map.put("key", key);
-        map.put("location", getLocation());
+        map.put(NAMESPACE_KEY, key);
+        map.put(LOCATION_KEY, getLocation());
         map.put(ENTITY_KEY, getEntities());
         return map;
     }
 
     public static CustomEntitySpawn deserialize(Map<String, Object> map) {
         TypedMap tMap = new TypedMap(map);
-        CustomEntitySpawn sp = new CustomEntitySpawn(tMap.get("location", Location.class, null), tMap.get("key", NamespacedEntry.class, null));
+        CustomEntitySpawn sp = new CustomEntitySpawn(tMap.get(LOCATION_KEY, Location.class, null), tMap.get(NAMESPACE_KEY, NamespacedEntry.class, null));
         return sp;
     }
 
