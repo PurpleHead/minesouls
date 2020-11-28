@@ -7,9 +7,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.scoreboard.DisplaySlot;
-import org.bukkit.scoreboard.Objective;
-import org.bukkit.scoreboard.Scoreboard;
 
 import java.util.*;
 
@@ -41,10 +38,7 @@ public class MineSoulsPlayer implements ConfigurationSerializable {
     private int vitalityLevel = 0;
 
     private int souls = 0;
-    private int soulLevel = 12;
-
-    private Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
-    private Objective objective;
+    private int soulLevel = 0;
 
     private MineSoulsPlayer(UUID uuid) {
         this.uuid = uuid;
