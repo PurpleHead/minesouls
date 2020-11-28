@@ -11,11 +11,14 @@ import org.bukkit.*;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -95,6 +98,14 @@ public class MineSoulsListener implements Listener {
                 }
             }
         }
+    }
+
+    @EventHandler
+    public void onEnemyKill (EntityDeathEvent event) {
+        LivingEntity e = event.getEntity();
+        MineSoulsPlayer player = MineSoulsPlayer.getPlayer(e.getKiller());
+        if(player != null)
+            player.addKill(e);
     }
 
     @EventHandler

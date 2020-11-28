@@ -6,6 +6,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Scoreboard;
 
 import java.util.*;
 
@@ -20,6 +24,8 @@ public class MineSoulsPlayer implements ConfigurationSerializable {
     private static final String STRENGTH_KEY = "strength";
     private static final String DEXTERITY_KEY = "dexterity";
     private static final String VITALITY_KEY = "vitality";
+    private static final String SOULS_KEY = "souls";
+    private static final String SOULS_LEVEL_KEY = "soulLevel";
 
     private static HashMap<UUID, MineSoulsPlayer> loadedPlayers = new HashMap<>();
 
@@ -33,6 +39,12 @@ public class MineSoulsPlayer implements ConfigurationSerializable {
     private int dexterityLevel = 0;
     private int strengthLevel = 0;
     private int vitalityLevel = 0;
+
+    private int souls = 0;
+    private int soulLevel = 12;
+
+    private Scoreboard scoreboard = Bukkit.getScoreboardManager().getNewScoreboard();
+    private Objective objective;
 
     private MineSoulsPlayer(UUID uuid) {
         this.uuid = uuid;
@@ -63,6 +75,14 @@ public class MineSoulsPlayer implements ConfigurationSerializable {
         loadedPlayers.forEach((k, v) -> {
             v.getBonfires().clear();
         });
+    }
+
+    public int calcSouls () {
+        return (int) (Math.pow(0.02* this.getSoulLevel(), 3) + Math.pow(3.06* this.getSoulLevel(), 2) + (105.6 * this.getSoulLevel()) - 895);
+    }
+
+    public void addKill (LivingEntity e) {
+        setSouls(getSouls() + 50);
     }
 
     public static HashMap<UUID, MineSoulsPlayer> getLoadedPlayers() {
@@ -133,6 +153,14 @@ public class MineSoulsPlayer implements ConfigurationSerializable {
         return strengthLevel;
     }
 
+    public int getSouls() {
+        return souls;
+    }
+
+    public void setSouls(int souls) {
+        this.souls = souls;
+    }
+
     public void setStrengthLevel(int strengthLevel) {
         this.strengthLevel = strengthLevel;
     }
@@ -143,6 +171,14 @@ public class MineSoulsPlayer implements ConfigurationSerializable {
 
     public void setVitalityLevel(int vitalityLevel) {
         this.vitalityLevel = vitalityLevel;
+    }
+
+    public int getSoulLevel() {
+        return soulLevel;
+    }
+
+    public void setSoulLevel(int soulLevel) {
+        this.soulLevel = soulLevel;
     }
 
     @Override
@@ -158,6 +194,8 @@ public class MineSoulsPlayer implements ConfigurationSerializable {
         map.put(DEXTERITY_KEY, getDexterityLevel());
         map.put(STRENGTH_KEY, getStrengthLevel());
         map.put(VITALITY_KEY, getVitalityLevel());
+        map.put(SOULS_KEY, getSouls());
+        map.put(SOULS_LEVEL_KEY, getSoulLevel());
 
         return map;
     }
@@ -175,6 +213,8 @@ public class MineSoulsPlayer implements ConfigurationSerializable {
         player.setDexterityLevel(t.getInt(DEXTERITY_KEY));
         player.setStrengthLevel(t.getInt(STRENGTH_KEY));
         player.setVitalityLevel(t.getInt(VITALITY_KEY));
+        player.setSouls(t.getInt(SOULS_KEY));
+        player.setSoulLevel(t.getInt(SOULS_LEVEL_KEY));
 
         return player;
     }

@@ -12,6 +12,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -71,6 +72,15 @@ public class BonfireGUI extends InventoryGUI {
             ItemMeta meta = item.getItemMeta();
             meta.setDisplayName(PREV_PAGE);
             item.setItemMeta(meta);
+            addButton(item, FIELDS - COLS + 1);
+        }
+        // Level
+        {
+            ItemStack item = new ItemStack(Material.PLAYER_HEAD);
+            SkullMeta meta = (SkullMeta) item.getItemMeta();
+            meta.setOwningPlayer(getOwner());
+            meta.setDisplayName("Level up");
+            item.setItemMeta(meta);
             addButton(item, FIELDS - COLS);
         }
     }
@@ -91,6 +101,9 @@ public class BonfireGUI extends InventoryGUI {
                     setNext(new BonfireGUI(getOwner(), name, (currentPage > 0) ? currentPage - 1 : 0));
                     close();
                 }
+            } else if (itemStack.getType() == Material.PLAYER_HEAD) {
+                setNext(new LevelGUI(getOwner()));
+                close();
             }
         }
     }
