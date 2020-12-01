@@ -11,11 +11,13 @@ import org.bukkit.*;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -60,7 +62,11 @@ public class MineSoulsListener implements Listener {
 
                     BonfireGUI bonfireGUI = new BonfireGUI(player, bonfire.getName());
                     JavaPlugin.getPlugin(JojokobiUtilPlugin.class).getGuiHandler().addGUI(bonfireGUI);
-                    bonfireGUI.setOnClose(() -> spawnGroupHandler.spawnGroup(mineSoulsPlayer.getCurrentArea().getUuid()));
+                    bonfireGUI.setOnClose(() -> {
+                        if (mineSoulsPlayer != null && mineSoulsPlayer.getCurrentArea() != null) {
+                            spawnGroupHandler.spawnGroup(mineSoulsPlayer.getCurrentArea().getUuid());
+                        }
+                    });
                     spawnGroupHandler.despawnAll();
                     bonfireGUI.show();
                     spawnGroupHandler.setAllRested();
@@ -78,7 +84,6 @@ public class MineSoulsListener implements Listener {
                             event.getClickedBlock().setType(Material.AIR);
                             areaMarkerHandler.addMarker(loc, new AreaMarker(area, loc));
                             event.getClickedBlock().getWorld().playEffect(loc, Effect.MOBSPAWNER_FLAMES, 100);
-                            event.getClickedBlock().getWorld().playSound(loc, Sound.ENTITY_CAT_HISS, 1, 1);
                         }
                     } else if(displayName.startsWith("Spawn::") && split.length > 1) {
                         String[] spaceSplit = split[1].split(" ");
@@ -91,6 +96,16 @@ public class MineSoulsListener implements Listener {
                     }
                 }
             }
+        }
+    }
+
+    @EventHandler
+    public void onEntityDeath (EntityDeathEvent event) {
+        LivingEntity e = event.getEntity();
+        if(e.getKiller() != null && e.getKiller().getPlayer() != null) {
+            MineSoulsPlayer player = MineSoulsPlayer.getPlayer(e.getKiller());
+            if(player != null)
+                player.addKill(e);
         }
     }
 

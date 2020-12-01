@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.entity.LivingEntity;
 
 import java.util.*;
 
@@ -15,6 +16,7 @@ public class MineSoulsPlayer implements ConfigurationSerializable {
     private static final String LAST_INTERACT_KEY = "lastInteract";
     private static final String BONFIRES_KEY = "bonfires";
     private static final String CURRENT_AREA_KEY = "currentArea";
+    private static final String STATS_KEY = "stats";
 
     private static HashMap<UUID, MineSoulsPlayer> loadedPlayers = new HashMap<>();
 
@@ -22,6 +24,8 @@ public class MineSoulsPlayer implements ConfigurationSerializable {
     private long lastInteract = 0;
     private UUID uuid;
     private Area currentArea = null;
+
+    private MineSoulsPlayerStats stats;
 
     private MineSoulsPlayer(UUID uuid) {
         this.uuid = uuid;
@@ -34,6 +38,8 @@ public class MineSoulsPlayer implements ConfigurationSerializable {
             mineSoulsPlayer = new MineSoulsPlayer(uuid);
             loadedPlayers.put(uuid, mineSoulsPlayer);
         }
+        if(mineSoulsPlayer.getStats() == null)
+            mineSoulsPlayer.setStats(new MineSoulsPlayerStats(uuid));
         return mineSoulsPlayer;
     }
 
@@ -52,6 +58,10 @@ public class MineSoulsPlayer implements ConfigurationSerializable {
         loadedPlayers.forEach((k, v) -> {
             v.getBonfires().clear();
         });
+    }
+
+    public void addKill (LivingEntity e) {
+        getStats().setSouls(getStats().getSouls() + 2000);
     }
 
     public static HashMap<UUID, MineSoulsPlayer> getLoadedPlayers() {
@@ -94,6 +104,15 @@ public class MineSoulsPlayer implements ConfigurationSerializable {
         this.currentArea = currentArea;
     }
 
+
+    public MineSoulsPlayerStats getStats() {
+        return stats;
+    }
+
+    public void setStats(MineSoulsPlayerStats stats) {
+        this.stats = stats;
+    }
+
     @Override
     public Map<String, Object> serialize() {
         Map<String, Object> map = new HashMap<>();
@@ -102,6 +121,7 @@ public class MineSoulsPlayer implements ConfigurationSerializable {
         map.put(UUID_KEY, getUuid().toString());
         map.put(BONFIRES_KEY, List.copyOf(getBonfires()));
         map.put(CURRENT_AREA_KEY, getCurrentArea());
+        map.put(STATS_KEY, getStats());
 
         return map;
     }
@@ -114,6 +134,7 @@ public class MineSoulsPlayer implements ConfigurationSerializable {
         player.setLastInteract(t.getLong(LAST_INTERACT_KEY));
         player.setBonfires(t.getList(BONFIRES_KEY, Location.class));
         player.setCurrentArea(t.get(CURRENT_AREA_KEY, Area.class, null));
+        player.setStats(t.get(STATS_KEY, MineSoulsPlayerStats.class, null));
 
         return player;
     }

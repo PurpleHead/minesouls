@@ -10,6 +10,9 @@ import java.util.Map;
 
 public class MinecraftEntitySpawn extends EntitySpawn {
 
+    private static final String TYPE_KEY = "type";
+    private static final String LOCATION_KEY = "location";
+
     private EntityType type;
     private Entity entity;
 
@@ -33,14 +36,14 @@ public class MinecraftEntitySpawn extends EntitySpawn {
     @Override
     public Map<String, Object> serialize() {
         Map<String, Object> map = new HashMap<>();
-        map.put("type", type + "");
-        map.put("location", getLocation());
+        map.put(TYPE_KEY, type + "");
+        map.put(LOCATION_KEY, getLocation());
         return map;
     }
 
     public static MinecraftEntitySpawn deserialize(Map<String, Object> map) {
         TypedMap tMap = new TypedMap(map);
-        return new MinecraftEntitySpawn(tMap.get("location", Location.class, null), tMap.getEnum("type", EntityType.class, EntityType.ZOMBIE));
+        return new MinecraftEntitySpawn(tMap.get(LOCATION_KEY, Location.class, null), tMap.getEnum(TYPE_KEY, EntityType.class, EntityType.ZOMBIE));
     }
 
 }

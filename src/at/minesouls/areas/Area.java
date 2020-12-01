@@ -8,6 +8,9 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class Area implements ConfigurationSerializable {
 
+    private static final String UUID_KEY = "uuid";
+    private static final String NAME_KEY = "name";
+
     private static HashMap<UUID, Area> areas = new HashMap<>();
 
     private final UUID uuid;
@@ -68,14 +71,14 @@ public class Area implements ConfigurationSerializable {
     @Override
     public Map<String, Object> serialize() {
         Map<String, Object> map = new HashMap<>();
-        map.put("uuid", uuid.toString());
-        map.put("name", name);
+        map.put(UUID_KEY, uuid.toString());
+        map.put(NAME_KEY, name);
         return map;
     }
 
     public static Area deserialize(Map<String, Object> map) {
         TypedMap tMap = new TypedMap(map);
-        Area area = new Area(tMap.getString("name"), UUID.fromString(tMap.getString("uuid")));
+        Area area = new Area(tMap.getString(NAME_KEY), UUID.fromString(tMap.getString(UUID_KEY)));
         return area;
     }
 }

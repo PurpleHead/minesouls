@@ -9,6 +9,10 @@ import java.util.Map;
 import java.util.Objects;
 
 public class RoundedLocation implements ConfigurationSerializable {
+    private static final String X_KEY = "x";
+    private static final String Y_KEY = "y";
+    private static final String Z_KEY = "z";
+
     private int x;
     private int y;
     private int z;
@@ -67,18 +71,18 @@ public class RoundedLocation implements ConfigurationSerializable {
     @Override
     public Map<String, Object> serialize() {
         Map<String, Object> map = new HashMap<>();
-        map.put("x", getX());
-        map.put("y", getY());
-        map.put("z", getZ());
+        map.put(X_KEY, getX());
+        map.put(Y_KEY, getY());
+        map.put(Z_KEY, getZ());
         return map;
     }
 
     public static RoundedLocation deserialize(Map<String, Object> map) {
         TypedMap tMap = new TypedMap(map);
         RoundedLocation roundedLocation = new RoundedLocation();
-        roundedLocation.setX(tMap.getInt("x"));
-        roundedLocation.setY(tMap.getInt("y"));
-        roundedLocation.setZ(tMap.getInt("z"));
+        roundedLocation.setX(tMap.getInt(X_KEY));
+        roundedLocation.setY(tMap.getInt(Y_KEY));
+        roundedLocation.setZ(tMap.getInt(Z_KEY));
         return roundedLocation;
     }
 }
