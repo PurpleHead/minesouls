@@ -8,6 +8,7 @@ import at.minesouls.gui.BonfireGUI;
 import at.minesouls.player.MineSoulsPlayer;
 import at.minesouls.spawngroups.SpawnGroupHandler;
 import org.bukkit.*;
+import org.bukkit.attribute.Attribute;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -54,7 +55,7 @@ public class MineSoulsListener implements Listener {
                         mineSoulsPlayer.getBonfires().add(event.getClickedBlock().getLocation());
                     }
 
-                    player.setHealth(20);
+                    player.setHealth(player.getAttribute(Attribute.GENERIC_MAX_HEALTH).getBaseValue());
                     removePotionEffects(player);
                     player.playSound(player.getLocation(), "minesouls.rest", 100.0f, 1.0f);
 

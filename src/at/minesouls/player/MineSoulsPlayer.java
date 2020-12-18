@@ -7,6 +7,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.ZombieVillager;
 
 import java.util.*;
 
@@ -61,7 +62,9 @@ public class MineSoulsPlayer implements ConfigurationSerializable {
     }
 
     public void addKill (LivingEntity e) {
-        getStats().setSouls(getStats().getSouls() + 2000);
+        if(e instanceof ZombieVillager) {
+            getStats().setSouls(getStats().getSouls() + 70);
+        }
     }
 
     public static HashMap<UUID, MineSoulsPlayer> getLoadedPlayers() {
