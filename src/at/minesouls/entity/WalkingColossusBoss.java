@@ -51,7 +51,6 @@ public class WalkingColossusBoss extends CustomEntity<IronGolem> implements Atta
 	@Override
 	protected void spawn() {
 		super.spawn();
-
 	}
 	
 	@Override
