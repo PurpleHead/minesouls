@@ -20,10 +20,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.*;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.potion.PotionEffect;
@@ -59,7 +56,7 @@ public class MineSoulsListener implements Listener {
                     removePotionEffects(player);
                     player.playSound(player.getLocation(), "minesouls.rest", 100.0f, 1.0f);
 
-                    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), "spawnpoint " + player.getName()+ " " + player.getLocation().getBlockX() + " " + player.getLocation().getBlockY()  + " " + player.getLocation().getBlockZ());
+                    mineSoulsPlayer.setSpawn(player.getLocation());
 
                     BonfireGUI bonfireGUI = new BonfireGUI(player, bonfire.getName());
                     JavaPlugin.getPlugin(JojokobiUtilPlugin.class).getGuiHandler().addGUI(bonfireGUI);
@@ -115,6 +112,12 @@ public class MineSoulsListener implements Listener {
         spawnGroupHandler.despawnAll();
         spawnGroupHandler.setAllRested();
         spawnGroupHandler.spawnGroup(MineSoulsPlayer.getPlayer(event.getEntity()).getCurrentArea().getUuid());
+    }
+
+    @EventHandler
+    public void onPlayerRespawn (PlayerRespawnEvent event) {
+        MineSoulsPlayer player = MineSoulsPlayer.getPlayer(event.getPlayer());
+        event.setRespawnLocation(player.getSpawn());
     }
 
     @EventHandler
